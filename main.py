@@ -85,11 +85,6 @@ DEFAULT_SITE_DOMAIN = "https://luaumor.vercel.app"
 
 SITE_DOMAIN = _env("SITE_DOMAIN", DEFAULT_SITE_DOMAIN).rstrip("/")
 IS_VERCEL = bool(os.getenv("VERCEL"))
-if IS_VERCEL and SITE_DOMAIN == DEFAULT_SITE_DOMAIN:
-    # Prefer the assigned Vercel URL when SITE_DOMAIN is not explicitly configured.
-    vercel_url = _env("VERCEL_URL", "")
-    if vercel_url:
-        SITE_DOMAIN = f"https://{vercel_url}".rstrip("/")
 SITE_HOST = urlparse(SITE_DOMAIN).netloc or "luaumor.vercel.app"
 SERVER_HOST = _env("SERVER_HOST", "194.164.194.118").strip()
 APP_HOST = _env("APP_HOST", "0.0.0.0")
@@ -97,7 +92,7 @@ APP_PORT = _env_int("PORT", _env_int("APP_PORT", 9745))
 
 DISCORD_CLIENT_ID = _env("DISCORD_CLIENT_ID", "1479628820448547097")
 DISCORD_CLIENT_SECRET = _env("DISCORD_CLIENT_SECRET", "X8qCdJl3VCS4hhn4LpzfT3DU-gE6167C")
-DISCORD_BOT_TOKEN = _env("DISCORD_BOT_TOKEN", "MTQ3OTYyODgyMDQ0ODU0NzA5Nw.GRC4Oc.8_G4No8e0pk5S1yDLhHKV9Wn-WsRWQ0hBdNJPA")
+DISCORD_BOT_TOKEN = _env("DISCORD_BOT_TOKEN", "MTQ3OTYyODgyMDQ0ODU0NzA5Nw.GaoK_B.Myuv8k63wyXeujLO36R7EUDOXi6HuXNegFLXwU")
 DISCORD_REDIRECT_URI = _env("DISCORD_REDIRECT_URI", f"{SITE_DOMAIN}/auth/discord/callback")
 DISCORD_GUILD_ID = _env("DISCORD_GUILD_ID", "1443300312642359440")
 ROLE_MONTHLY_ID = _env("ROLE_MONTHLY_ID", "1479633909552517162")
@@ -1353,5 +1348,3 @@ if __name__ == "__main__":
     import uvicorn
 
     uvicorn.run("main:app", host=APP_HOST, port=APP_PORT, reload=False)
-
-
