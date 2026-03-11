@@ -1,13 +1,18 @@
-.vercel
-*.log
-*.pyc
-__pycache__
+# Local environment secrets
+.env
+.env.*
 
-# Environments 
-.env 
-.venv 
-env/ 
-venv/ 
-ENV/ 
-env.bak/ 
-venv.bak/ 
+# Python cache/build
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+.venv/
+venv/
+
+# Local SQLite files
+*.db
+*.sqlite
+*.sqlite3
