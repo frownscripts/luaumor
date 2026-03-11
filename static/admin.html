@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin — Delta Premium</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+    <meta http-equiv="Cache-Control" content="no-store">
+    <meta name="robots" content="noindex,nofollow">
+</head>
+<body class="db-body">
+<canvas id="snow-canvas"></canvas>
+
+<div class="db-layout">
+    <!-- Sidebar -->
+    <aside class="db-sidebar" id="sidebar">
+        <div class="db-sidebar-header">
+            <span class="db-brand">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><shield/><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                Admin Panel
+            </span>
+        </div>
+        <nav class="db-nav">
+            <button class="db-nav-item active" onclick="showTab('overview', this)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                Overview
+            </button>
+            <button class="db-nav-item" onclick="showTab('users', this)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                Users
+            </button>
+            <button class="db-nav-item" onclick="showTab('keys', this)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+                Keys
+            </button>
+            <button class="db-nav-item" onclick="showTab('updates', this)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                Post Updates
+            </button>
+            <button class="db-nav-item" onclick="showTab('tickets', this)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                Tickets
+                <span class="nav-badge" id="admin-tickets-badge" style="display:none">!</span>
+            </button>
+        </nav>
+        <div class="db-sidebar-footer">
+            <div class="db-user-info">
+                <div class="db-avatar" style="background:linear-gradient(135deg,#ef4444,#f97316)">A</div>
+                <div class="db-user-details">
+                    <div class="db-user-name" id="admin-username">Admin</div>
+                    <div class="db-user-role" style="color:#ef4444">Administrator</div>
+                </div>
+            </div>
+            <div class="db-sidebar-actions">
+                <a href="/dashboard" class="db-sidebar-link">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                    User Dashboard
+                </a>
+                <button class="db-sidebar-link logout-link" onclick="handleLogout()">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                    Logout
+                </button>
+            </div>
+        </div>
+    </aside>
+
+    <div class="db-overlay" id="db-overlay" onclick="toggleSidebar()"></div>
+
+    <main class="db-main">
+        <div class="db-topbar">
+            <button class="db-menu-toggle" onclick="toggleSidebar()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            </button>
+            <span class="db-topbar-title" id="topbar-title">Overview</span>
+        </div>
+
+        <!-- OVERVIEW TAB -->
+        <div id="tab-overview" class="db-tab active">
+            <div class="db-page-header">
+                <h1>Admin Overview</h1>
+                <p>System statistics and quick actions.</p>
+            </div>
+            <div class="db-stat-cards" id="admin-stats">
+                <div class="db-stat-card"><div class="db-stat-label">Total Users</div><div class="db-stat-value" id="st-users">—</div><div class="db-stat-icon db-stat-icon-blue"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div></div>
+                <div class="db-stat-card"><div class="db-stat-label">Active Keys</div><div class="db-stat-value" id="st-active-keys">—</div><div class="db-stat-icon db-stat-icon-green"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg></div></div>
+                <div class="db-stat-card"><div class="db-stat-label">Unused Keys</div><div class="db-stat-value" id="st-unused">—</div><div class="db-stat-icon db-stat-icon-indigo"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div></div>
+                <div class="db-stat-card"><div class="db-stat-label">Total Revenue</div><div class="db-stat-value" id="st-revenue">—</div><div class="db-stat-icon db-stat-icon-purple"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div></div>
+                <div class="db-stat-card"><div class="db-stat-label">Open Tickets</div><div class="db-stat-value" id="st-open-tickets">—</div><div class="db-stat-icon db-stat-icon-red"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div></div>
+                <div class="db-stat-card"><div class="db-stat-label">Live Downloads</div><div class="db-stat-value" id="st-downloads">—</div><div class="db-stat-icon db-stat-icon-blue"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div></div>
+            </div>
+            <div class="admin-quick-actions">
+                <button class="db-btn-primary" onclick="showTab('keys', document.querySelector('.db-nav-item:nth-child(3)'))">
+                    + Generate Keys
+                </button>
+                <button class="db-btn-secondary" onclick="showTab('users', document.querySelector('.db-nav-item:nth-child(2)'))">
+                    Manage Users
+                </button>
+                <button class="db-btn-secondary" onclick="showTab('updates', document.querySelector('.db-nav-item:nth-child(4)'))">
+                    Post Update
+                </button>
+                <button class="db-btn-secondary" onclick="showTab('tickets', document.querySelector('.db-nav-item:nth-child(5)'))">
+                    Manage Tickets
+                </button>
+            </div>
+        </div>
+
+        <!-- USERS TAB -->
+        <div id="tab-users" class="db-tab">
+            <div class="db-page-header">
+                <h1>Users</h1>
+                <p>Manage all registered users.</p>
+            </div>
+            <div class="admin-toolbar">
+                <input type="text" id="user-search" placeholder="Search by username..." oninput="searchUsers(this.value)">
+                <button class="db-btn-secondary" onclick="loadUsers()">Refresh</button>
+            </div>
+            <div id="users-table-wrap" class="db-card">
+                <div class="db-loading">Loading users...</div>
+            </div>
+        </div>
+
+        <!-- KEYS TAB -->
+        <div id="tab-keys" class="db-tab">
+            <div class="db-page-header">
+                <h1>License Keys</h1>
+                <p>Generate, view and manage license keys.</p>
+            </div>
+            <div class="db-card" style="margin-bottom:1.5rem">
+                <div class="db-card-title">Generate Keys</div>
+                <div class="admin-gen-form">
+                    <select id="gen-plan" onchange="toggleTestSecs()">
+                        <option value="monthly">Monthly ($1)</option>
+                        <option value="lifetime">Lifetime ($5)</option>
+                        <option value="test">Test (seconds)</option>
+                    </select>
+                    <input type="number" id="gen-count" placeholder="Count (1-200)" min="1" max="200" value="1">
+                    <input type="text" id="gen-note" placeholder="Note (optional)">
+                    <input type="number" id="gen-test-secs" placeholder="Duration (seconds, e.g. 30)" min="1" style="display:none">
+                    <button class="db-btn-primary" onclick="generateKeys()">Generate</button>
+                </div>
+                <div id="gen-result" style="margin-top:1rem;display:none">
+                    <div class="db-card-title" style="margin-bottom:0.5rem">Generated Keys</div>
+                    <textarea id="gen-keys-out" rows="8" readonly style="width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:0.75rem;border-radius:10px;font-family:monospace;font-size:0.82rem;resize:vertical"></textarea>
+                    <button class="db-btn-secondary" style="margin-top:0.5rem" onclick="copyKeys()">Copy All</button>
+                </div>
+            </div>
+            <div class="admin-toolbar">
+                <input type="text" id="key-search" placeholder="Search keys..." oninput="searchKeys(this.value)">
+                <select id="key-plan-filter" onchange="searchKeys(document.getElementById('key-search').value)">
+                    <option value="">All Plans</option>
+                    <option value="monthly">Monthly</option>
+                    <option value="lifetime">Lifetime</option>
+                    <option value="test">Test</option>
+                </select>
+                <button class="db-btn-secondary" onclick="loadKeys()">Refresh</button>
+            </div>
+            <div id="keys-table-wrap" class="db-card">
+                <div class="db-loading">Loading keys...</div>
+            </div>
+        </div>
+
+        <!-- UPDATES TAB -->
+        <div id="tab-updates" class="db-tab">
+            <div class="db-page-header">
+                <h1>Post Updates</h1>
+                <p>Publish updates visible to all premium users.</p>
+            </div>
+            <div class="db-card" style="margin-bottom:1.5rem">
+                <div class="db-card-title">New Update</div>
+                <div class="admin-update-form">
+                    <input type="text" id="upd-title" placeholder="Update title">
+                    <div class="admin-update-row">
+                        <select id="upd-category">
+                            <option value="update">Update</option>
+                            <option value="announcement">Announcement</option>
+                            <option value="maintenance">Maintenance</option>
+                            <option value="hotfix">Hotfix</option>
+                        </select>
+                        <label class="admin-checkbox-label">
+                            <input type="checkbox" id="upd-pinned"> Pin to top
+                        </label>
+                    </div>
+                    <textarea id="upd-content" rows="5" placeholder="Update content..."></textarea>
+                    <button class="db-btn-primary" onclick="postUpdate()">Publish Update</button>
+                    <div id="upd-msg" style="margin-top:0.5rem;display:none"></div>
+                </div>
+            </div>
+            <div id="updates-list" class="db-card">
+                <div class="db-card-title">Published Updates</div>
+                <div id="admin-updates-body"><div class="db-loading">Loading...</div></div>
+            </div>
+        </div>
+
+        <!-- TICKETS TAB -->
+        <div id="tab-tickets" class="db-tab">
+            <div class="db-page-header">
+                <h1>Support Tickets</h1>
+                <p>Reply to users, review conversations, and close tickets live.</p>
+            </div>
+            <div class="tickets-grid">
+                <div class="tickets-list" id="admin-tickets-list">
+                    <div class="db-loading">Loading tickets...</div>
+                </div>
+                <div>
+                    <div class="ticket-thread" id="admin-ticket-thread">
+                        <div class="db-loading">Select a ticket to manage.</div>
+                    </div>
+                    <div class="ticket-compose-card" id="admin-ticket-reply-card" style="display:none">
+                        <div class="db-settings-section-title">Reply as Support</div>
+                        <textarea id="admin-ticket-reply-message" rows="4" placeholder="Type your reply..."></textarea>
+                        <div style="margin-top:.9rem;display:flex;justify-content:space-between;gap:.75rem;flex-wrap:wrap">
+                            <button class="db-btn-danger" onclick="closeActiveTicket()">Close Ticket</button>
+                            <button class="db-btn-primary" onclick="replyToAdminTicket()">Send Reply</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="db-footer">
+            <span>&copy; 2026 Delta Premium — Admin Panel</span>
+        </footer>
+    </main>
+</div>
+
+<!-- User Edit Modal -->
+<div class="admin-modal-overlay" id="user-modal" style="display:none" onclick="closeModal('user-modal')">
+    <div class="admin-modal" onclick="event.stopPropagation()">
+        <div class="admin-modal-header">
+            <h3 id="user-modal-title">Edit User</h3>
+            <button onclick="closeModal('user-modal')">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+        <div class="admin-modal-body">
+            <input type="hidden" id="edit-user-id">
+            <div class="form-group"><label>Username</label><input type="text" id="edit-username" placeholder="New username"></div>
+            <div class="form-group"><label>Password</label><input type="password" id="edit-password" placeholder="New password (leave blank to keep)"></div>
+            <div class="form-group"><label>Role</label>
+                <select id="edit-role"><option value="user">User</option><option value="admin">Admin</option></select>
+            </div>
+            <div class="form-group"><label>Add Days to Key</label><input type="number" id="edit-adddays" placeholder="0" min="0"></div>
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="edit-banned" style="width:auto;margin-right:6px"> Banned
+                </label>
+            </div>
+            <div class="form-group" id="ban-reason-group" style="display:none"><label>Ban Reason</label><input type="text" id="edit-ban-reason" placeholder="Reason for ban"></div>
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="edit-paused" style="width:auto;margin-right:6px"> Pause Premium Access
+                </label>
+            </div>
+        </div>
+        <div class="admin-modal-footer">
+            <button class="db-btn-primary" onclick="saveUserChanges()">Save Changes</button>
+            <button class="db-btn-danger" onclick="deleteUser()">Delete User</button>
+            <div id="edit-user-msg" style="margin-top:0.5rem;display:none"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Key Edit Modal -->
+<div class="admin-modal-overlay" id="key-modal" style="display:none" onclick="closeModal('key-modal')">
+    <div class="admin-modal" onclick="event.stopPropagation()">
+        <div class="admin-modal-header">
+            <h3>Edit Key</h3>
+            <button onclick="closeModal('key-modal')">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+        <div class="admin-modal-body">
+            <input type="hidden" id="edit-key-id">
+            <div class="form-group"><label>Key Code</label><input type="text" id="edit-key-code" readonly style="font-family:monospace;opacity:0.7"></div>
+            <div class="form-group"><label>Add Days</label><input type="number" id="edit-key-adddays" placeholder="0" min="0"></div>
+            <div class="form-group">
+                <label><input type="checkbox" id="edit-key-paused" style="width:auto;margin-right:6px"> Paused</label>
+            </div>
+            <div class="form-group">
+                <label><input type="checkbox" id="edit-key-inactive" style="width:auto;margin-right:6px"> Deactivate Key</label>
+            </div>
+            <div class="form-group">
+                <label><input type="checkbox" id="edit-key-reset" style="width:auto;margin-right:6px"> Reset Key (make unused again)</label>
+            </div>
+        </div>
+        <div class="admin-modal-footer">
+            <button class="db-btn-primary" onclick="saveKeyChanges()">Save Changes</button>
+            <button class="db-btn-danger" onclick="deleteKey()">Delete Key</button>
+            <div id="edit-key-msg" style="margin-top:0.5rem;display:none"></div>
+        </div>
+    </div>
+</div>
+
+<script src="/static/app.js"></script>
+<script>
+// Auth check
+(function() {
+    const token = localStorage.getItem('dp_token');
+    const role = localStorage.getItem('dp_role');
+    if (!token || role !== 'admin') window.location.href = '/login';
+    document.getElementById('admin-username').textContent = localStorage.getItem('dp_username') || 'Admin';
+})();
+
+let allUsers = [];
+let allKeys = [];
+let allTickets = [];
+let currentAdminTicketId = null;
+let adminPollHandle = null;
+let adminPollInFlight = false;
+
+const ADMIN_POLL_INTERVAL_MS = 30000;
+const SNOW_FRAME_MS = 1000 / 24;
+
+function esc(value) {
+    return String(value || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function formatDate(value) {
+    return value ? new Date(value).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—';
+}
+
+function currentTabName() {
+    const active = document.querySelector('.db-tab.active');
+    return active ? active.id.replace('tab-', '') : 'overview';
+}
+
+function setAdminTicketBadge(show) {
+    const badge = document.getElementById('admin-tickets-badge');
+    if (badge) badge.style.display = show ? 'inline-flex' : 'none';
+}
+
+function showTab(name, btn) {
+    document.querySelectorAll('.db-tab').forEach((tab) => tab.classList.remove('active'));
+    document.querySelectorAll('.db-nav-item').forEach((item) => item.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    document.getElementById('topbar-title').textContent = ({ overview: 'Overview', users: 'Users', keys: 'Keys', updates: 'Post Updates', tickets: 'Tickets' })[name] || name;
+    if (btn) btn.classList.add('active');
+    else document.querySelectorAll('.db-nav-item').forEach((item) => ((item.getAttribute('onclick') || '').includes(`'${name}'`)) && item.classList.add('active'));
+    if (name === 'overview') loadStats();
+    if (name === 'users') loadUsers();
+    if (name === 'keys') loadKeys();
+    if (name === 'updates') loadAdminUpdates();
+    if (name === 'tickets') {
+        loadAdminTickets(currentAdminTicketId);
+        setAdminTicketBadge(false);
+    }
+    if (window.innerWidth < 900) {
+        document.getElementById('sidebar').classList.remove('open');
+        document.getElementById('db-overlay').classList.remove('active');
+    }
+}
+
+function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('db-overlay').classList.toggle('active');
+}
+
+async function apiJson(url, options = {}) {
+    const headers = { ...(options.headers || {}) };
+    const needsJson = options.body && !headers['Content-Type'];
+    const response = await window.authFetch(url, { ...options, headers: needsJson ? { ...headers, 'Content-Type': 'application/json' } : headers });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.detail || 'Request failed');
+    return data;
+}
+
+async function loadStats() {
+    const d = await apiJson('/api/admin/stats');
+    document.getElementById('st-users').textContent = d.total_users;
+    document.getElementById('st-active-keys').textContent = d.active_keys;
+    document.getElementById('st-unused').textContent = d.unused_keys;
+    document.getElementById('st-revenue').textContent = '$' + Number(d.total_revenue || 0).toFixed(2);
+    document.getElementById('st-open-tickets').textContent = d.open_tickets;
+    document.getElementById('st-downloads').textContent = Number(d.download_count || 0).toLocaleString();
+}
+
+// ── USERS ──────────────────────────────────────────────────────
+async function loadUsers(q = '') {
+    const wrap = document.getElementById('users-table-wrap');
+    wrap.innerHTML = '<div class="db-loading">Loading...</div>';
+    try {
+        allUsers = await apiJson(`/api/admin/users?q=${encodeURIComponent(q)}`);
+        renderUsersTable(allUsers);
+    } catch (e) {
+        wrap.innerHTML = `<div class="db-loading">${esc(e.message)}</div>`;
+    }
+}
+
+function searchUsers(q) { loadUsers(q); }
+
+function renderUsersTable(users) {
+    const wrap = document.getElementById('users-table-wrap');
+    if (!users.length) {
+        wrap.innerHTML = '<div class="db-loading">No users found.</div>';
+        return;
+    }
+    wrap.innerHTML = `<div class="db-table-wrap"><table class="db-table">
+        <thead><tr><th>ID</th><th>Username</th><th>Discord</th><th>Role</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody>${users.map((u) => `
+            <tr class="${u.banned ? 'row-banned' : ''}">
+                <td>${u.id}</td>
+                <td>${esc(u.username)}</td>
+                <td>${u.discord_username ? esc(u.discord_username) : '—'}</td>
+                <td><span class="db-badge ${u.role === 'admin' ? 'db-badge-red' : 'db-badge-gray'}">${esc(u.role)}</span></td>
+                <td><span class="db-badge ${u.banned ? 'db-badge-red' : (u.account_active ? 'db-badge-green' : 'db-badge-gray')}">${u.banned ? 'Banned' : (u.account_active ? 'Active' : 'Inactive')}</span></td>
+                <td><button class="db-btn-sm" onclick="openUserModal(${u.id})">Edit</button></td>
+            </tr>
+        `).join('')}</tbody>
+    </table></div>`;
+}
+
+function openUserModal(userId) {
+    const user = allUsers.find((u) => u.id === userId);
+    if (!user) return;
+    document.getElementById('edit-user-id').value = user.id;
+    document.getElementById('user-modal-title').textContent = `Edit: ${user.username}`;
+    document.getElementById('edit-username').value = user.username;
+    document.getElementById('edit-password').value = '';
+    document.getElementById('edit-role').value = user.role;
+    document.getElementById('edit-adddays').value = '';
+    document.getElementById('edit-banned').checked = !!user.banned;
+    document.getElementById('edit-ban-reason').value = user.ban_reason || '';
+    document.getElementById('ban-reason-group').style.display = user.banned ? 'block' : 'none';
+    document.getElementById('edit-paused').checked = false;
+    document.getElementById('user-modal').style.display = 'flex';
+    document.getElementById('edit-user-msg').style.display = 'none';
+    document.getElementById('edit-banned').onchange = () => {
+        document.getElementById('ban-reason-group').style.display = document.getElementById('edit-banned').checked ? 'block' : 'none';
+    };
+}
+
+async function saveUserChanges() {
+    const id = document.getElementById('edit-user-id').value;
+    const addDays = parseInt(document.getElementById('edit-adddays').value, 10) || 0;
+    const body = {
+        username: document.getElementById('edit-username').value.trim(),
+        password: document.getElementById('edit-password').value,
+        role: document.getElementById('edit-role').value,
+        banned: document.getElementById('edit-banned').checked ? 1 : 0,
+        ban_reason: document.getElementById('edit-ban-reason').value,
+        paused: document.getElementById('edit-paused').checked ? 1 : 0,
+    };
+    if (addDays > 0) body.add_days = addDays;
+    const msgEl = document.getElementById('edit-user-msg');
+    try {
+        await apiJson(`/api/admin/users/${id}`, { method: 'PUT', body: JSON.stringify(body) });
+        msgEl.className = 'auth-success';
+        msgEl.textContent = 'Saved!';
+        msgEl.style.display = 'block';
+        window.showToast('User updated successfully.', 'success');
+        setTimeout(() => { closeModal('user-modal'); loadUsers(); loadStats(); }, 700);
+    } catch (e) {
+        msgEl.className = 'auth-error';
+        msgEl.textContent = e.message;
+        msgEl.style.display = 'block';
+    }
+}
+
+async function deleteUser() {
+    const id = document.getElementById('edit-user-id').value;
+    const confirmed = await window.showConfirm({
+        title: 'Delete user?',
+        message: 'This permanently removes the user account. Existing data will not be reset for other users.',
+        confirmText: 'Delete user',
+        cancelText: 'Cancel',
+        danger: true,
+    });
+    if (!confirmed) return;
+    try {
+        await apiJson(`/api/admin/users/${id}`, { method: 'DELETE' });
+        closeModal('user-modal');
+        loadUsers();
+        loadStats();
+        window.showToast('User deleted.', 'success');
+    } catch (e) {
+        window.showToast(e.message || 'Delete failed.', 'error');
+    }
+}
+
+// ── KEYS ───────────────────────────────────────────────────────
+async function loadKeys(q = '') {
+    const wrap = document.getElementById('keys-table-wrap');
+    wrap.innerHTML = '<div class="db-loading">Loading...</div>';
+    try {
+        const planFilter = document.getElementById('key-plan-filter').value;
+        allKeys = await apiJson(`/api/admin/keys?q=${encodeURIComponent(q)}&plan=${planFilter}`);
+        renderKeysTable(allKeys);
+    } catch (e) {
+        wrap.innerHTML = `<div class="db-loading">${esc(e.message)}</div>`;
+    }
+}
+
+function searchKeys(q) { loadKeys(q); }
+
+function renderKeysTable(keys) {
+    const wrap = document.getElementById('keys-table-wrap');
+    if (!keys.length) {
+        wrap.innerHTML = '<div class="db-loading">No keys found.</div>';
+        return;
+    }
+    wrap.innerHTML = `<div class="db-table-wrap"><table class="db-table">
+        <thead><tr><th>Key</th><th>Plan</th><th>Status</th><th>Used By</th><th>Expires</th><th>Actions</th></tr></thead>
+        <tbody>${keys.map((k) => `
+            <tr>
+                <td style="font-family:monospace;font-size:0.78rem">${esc(k.key_code)}</td>
+                <td><span class="db-badge ${k.plan === 'lifetime' ? 'db-badge-purple' : 'db-badge-blue'}">${esc(k.plan)}</span></td>
+                <td><span class="db-badge ${k.paused ? 'db-badge-red' : (k.used ? 'db-badge-gray' : 'db-badge-green')}">${k.paused ? 'Paused' : (k.used ? 'Used' : 'Unused')}</span></td>
+                <td>${esc(k.owner || '—')}</td>
+                <td>${k.expires_at ? formatDate(k.expires_at) : (k.plan === 'lifetime' ? 'Never' : '—')}</td>
+                <td><button class="db-btn-sm" onclick="openKeyModal(${k.id})">Edit</button></td>
+            </tr>
+        `).join('')}</tbody>
+    </table></div>`;
+}
+
+function toggleTestSecs() {
+    document.getElementById('gen-test-secs').style.display = document.getElementById('gen-plan').value === 'test' ? '' : 'none';
+}
+
+async function generateKeys() {
+    const plan = document.getElementById('gen-plan').value;
+    const count = parseInt(document.getElementById('gen-count').value, 10) || 1;
+    const note = document.getElementById('gen-note').value;
+    const body = { plan, count, note };
+    if (plan === 'test') {
+        const secs = parseInt(document.getElementById('gen-test-secs').value, 10);
+        if (!secs || secs < 1) {
+            window.showToast('Enter a valid duration in seconds for test keys.', 'error');
+            return;
+        }
+        body.duration_seconds = secs;
+    }
+    try {
+        const d = await apiJson('/api/admin/keys/generate', { method: 'POST', body: JSON.stringify(body) });
+        document.getElementById('gen-keys-out').value = d.keys.join('\n');
+        document.getElementById('gen-result').style.display = 'block';
+        loadKeys();
+        loadStats();
+        window.showToast(`${d.count} key${d.count === 1 ? '' : 's'} generated.`, 'success');
+    } catch (e) {
+        window.showToast(e.message || 'Key generation failed.', 'error');
+    }
+}
+
+async function copyKeys() {
+    await window.copyText(document.getElementById('gen-keys-out').value, 'Generated keys copied.');
+}
+
+function openKeyModal(keyId) {
+    const key = allKeys.find((item) => item.id === keyId);
+    if (!key) return;
+    document.getElementById('edit-key-id').value = key.id;
+    document.getElementById('edit-key-code').value = key.key_code;
+    document.getElementById('edit-key-adddays').value = '';
+    document.getElementById('edit-key-paused').checked = !!key.paused;
+    document.getElementById('edit-key-inactive').checked = !key.active;
+    document.getElementById('edit-key-reset').checked = false;
+    document.getElementById('key-modal').style.display = 'flex';
+    document.getElementById('edit-key-msg').style.display = 'none';
+}
+
+async function saveKeyChanges() {
+    const id = document.getElementById('edit-key-id').value;
+    const addDays = parseInt(document.getElementById('edit-key-adddays').value, 10) || 0;
+    const body = {
+        paused: document.getElementById('edit-key-paused').checked ? 1 : 0,
+        active: document.getElementById('edit-key-inactive').checked ? 0 : 1,
+        reset: document.getElementById('edit-key-reset').checked,
+    };
+    if (addDays > 0) body.add_days = addDays;
+    const msgEl = document.getElementById('edit-key-msg');
+    try {
+        await apiJson(`/api/admin/keys/${id}`, { method: 'PUT', body: JSON.stringify(body) });
+        msgEl.className = 'auth-success';
+        msgEl.textContent = 'Saved!';
+        msgEl.style.display = 'block';
+        window.showToast('Key updated successfully.', 'success');
+        setTimeout(() => { closeModal('key-modal'); loadKeys(); loadStats(); }, 700);
+    } catch (e) {
+        msgEl.className = 'auth-error';
+        msgEl.textContent = e.message;
+        msgEl.style.display = 'block';
+    }
+}
+
+async function deleteKey() {
+    const id = document.getElementById('edit-key-id').value;
+    const confirmed = await window.showConfirm({
+        title: 'Delete key?',
+        message: 'Deleting a key can remove premium access from linked users.',
+        confirmText: 'Delete key',
+        cancelText: 'Cancel',
+        danger: true,
+    });
+    if (!confirmed) return;
+    try {
+        await apiJson(`/api/admin/keys/${id}`, { method: 'DELETE' });
+        closeModal('key-modal');
+        loadKeys();
+        loadStats();
+        window.showToast('Key deleted.', 'success');
+    } catch (e) {
+        window.showToast(e.message || 'Delete failed.', 'error');
+    }
+}
+
+// ── UPDATES ────────────────────────────────────────────────────
+async function loadAdminUpdates() {
+    const body = document.getElementById('admin-updates-body');
+    body.innerHTML = '<div class="db-loading">Loading...</div>';
+    try {
+        const updates = await apiJson('/api/admin/updates');
+        if (!updates.length) {
+            body.innerHTML = '<div class="db-loading">No updates posted.</div>';
+            return;
+        }
+        body.innerHTML = updates.map((u) => `
+            <div class="admin-update-item">
+                <div class="admin-update-item-header">
+                    <div>
+                        <span class="update-category update-cat-${u.category}">${esc(u.category)}</span>
+                        ${u.pinned ? '<span class="update-pinned-badge">📌</span>' : ''}
+                        <strong style="margin-left:8px">${esc(u.title)}</strong>
+                    </div>
+                    <div style="display:flex;gap:8px;align-items:center">
+                        <span style="color:var(--muted);font-size:0.8rem">${formatDate(u.created_at)}</span>
+                        <button class="db-btn-sm db-btn-danger-sm" onclick="deleteUpdate(${u.id})">Delete</button>
+                    </div>
+                </div>
+                <div class="admin-update-content">${esc(u.content).replace(/\n/g, '<br>')}</div>
+            </div>
+        `).join('');
+    } catch (e) {
+        body.innerHTML = `<div class="db-loading">${esc(e.message)}</div>`;
+    }
+}
+
+async function postUpdate() {
+    const title = document.getElementById('upd-title').value.trim();
+    const content = document.getElementById('upd-content').value.trim();
+    const category = document.getElementById('upd-category').value;
+    const pinned = document.getElementById('upd-pinned').checked ? 1 : 0;
+    const msgEl = document.getElementById('upd-msg');
+    if (!title || !content) {
+        msgEl.className = 'auth-error';
+        msgEl.textContent = 'Title and content required';
+        msgEl.style.display = 'block';
+        return;
+    }
+    try {
+        await apiJson('/api/admin/updates', { method: 'POST', body: JSON.stringify({ title, content, category, pinned }) });
+        msgEl.className = 'auth-success';
+        msgEl.textContent = 'Update published!';
+        msgEl.style.display = 'block';
+        document.getElementById('upd-title').value = '';
+        document.getElementById('upd-content').value = '';
+        loadAdminUpdates();
+        window.showToast('Update published live.', 'success');
+    } catch (e) {
+        msgEl.className = 'auth-error';
+        msgEl.textContent = e.message;
+        msgEl.style.display = 'block';
+    }
+}
+
+async function deleteUpdate(id) {
+    const confirmed = await window.showConfirm({
+        title: 'Delete update?',
+        message: 'This removes the update from all users immediately.',
+        confirmText: 'Delete update',
+        cancelText: 'Cancel',
+        danger: true,
+    });
+    if (!confirmed) return;
+    try {
+        await apiJson(`/api/admin/updates/${id}`, { method: 'DELETE' });
+        loadAdminUpdates();
+        window.showToast('Update deleted.', 'success');
+    } catch (e) {
+        window.showToast(e.message || 'Delete failed.', 'error');
+    }
+}
+
+// ── TICKETS ────────────────────────────────────────────────────
+async function loadAdminTickets(selectId = null) {
+    const list = document.getElementById('admin-tickets-list');
+    list.innerHTML = '<div class="db-loading">Loading tickets...</div>';
+    try {
+        allTickets = await apiJson('/api/admin/tickets');
+        renderAdminTicketsList();
+        const nextId = selectId || currentAdminTicketId || (allTickets[0] && allTickets[0].id);
+        if (nextId) await openAdminTicket(nextId, false);
+        else renderAdminTicketPlaceholder();
+    } catch (e) {
+        list.innerHTML = `<div class="db-loading">${esc(e.message)}</div>`;
+        renderAdminTicketPlaceholder('Tickets could not be loaded.');
+    }
+}
+
+function renderAdminTicketsList() {
+    const list = document.getElementById('admin-tickets-list');
+    if (!allTickets.length) {
+        list.innerHTML = '<div class="db-loading">No support tickets right now.</div>';
+        return;
+    }
+    list.innerHTML = allTickets.map((ticket) => `
+        <button class="ticket-list-item ${ticket.id === currentAdminTicketId ? 'active' : ''}" onclick="openAdminTicket(${ticket.id})">
+            <div class="ticket-list-subject">${esc(ticket.subject)}</div>
+            <div class="ticket-list-meta">
+                <span>${esc(ticket.username || 'User')}</span>
+                <span class="db-badge ${ticket.status === 'open' ? 'db-badge-green' : 'db-badge-gray'}">${esc(ticket.status)}</span>
+            </div>
+            <div class="ticket-list-preview">${esc(ticket.last_message || 'No messages yet')}</div>
+        </button>
+    `).join('');
+}
+
+function renderAdminTicketPlaceholder(message = 'Select a ticket to manage.') {
+    document.getElementById('admin-ticket-thread').innerHTML = `<div class="db-loading">${esc(message)}</div>`;
+    document.getElementById('admin-ticket-reply-card').style.display = 'none';
+}
+
+async function openAdminTicket(ticketId, scrollToBottom = true) {
+    currentAdminTicketId = ticketId;
+    renderAdminTicketsList();
+    try {
+        const ticket = await apiJson(`/api/tickets/${ticketId}`);
+        const thread = document.getElementById('admin-ticket-thread');
+        thread.innerHTML = `
+            <div class="ticket-thread-header">
+                <div>
+                    <div class="ticket-thread-title">${esc(ticket.subject)}</div>
+                    <div class="ticket-list-meta">
+                        <span>${esc(ticket.username || 'User')}</span>
+                        <span>${esc(ticket.category || 'support')}</span>
+                        <span>${formatDate(ticket.updated_at)}</span>
+                        <span class="db-badge ${ticket.status === 'open' ? 'db-badge-green' : 'db-badge-gray'}">${esc(ticket.status)}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="ticket-messages" id="admin-ticket-messages">
+                ${(ticket.messages || []).map((message) => `
+                    <div class="ticket-message ${message.author_role === 'admin' ? 'admin' : ''}">
+                        <div class="ticket-message-meta">
+                            <strong>${esc(message.username || (message.author_role === 'admin' ? 'Support' : 'User'))}</strong>
+                            <span>${formatDate(message.created_at)}</span>
+                        </div>
+                        <div class="ticket-message-body">${esc(message.message)}</div>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+        document.getElementById('admin-ticket-reply-card').style.display = ticket.status === 'open' ? 'block' : 'none';
+        if (ticket.status !== 'open') {
+            thread.insertAdjacentHTML('beforeend', '<div style="margin-top:1rem;color:var(--muted)">This ticket is closed. Only the history is shown.</div>');
+        }
+        if (scrollToBottom) {
+            const messages = document.getElementById('admin-ticket-messages');
+            if (messages) messages.scrollTop = messages.scrollHeight;
+        }
+        setAdminTicketBadge(false);
+    } catch (e) {
+        renderAdminTicketPlaceholder(e.message || 'Ticket could not be opened.');
+    }
+}
+
+async function replyToAdminTicket() {
+    const input = document.getElementById('admin-ticket-reply-message');
+    const message = input.value.trim();
+    if (!currentAdminTicketId || !message) {
+        window.showToast('Select a ticket and enter a reply first.', 'error');
+        return;
+    }
+    try {
+        await apiJson(`/api/tickets/${currentAdminTicketId}/reply`, { method: 'POST', body: JSON.stringify({ message }) });
+        input.value = '';
+        await loadAdminTickets(currentAdminTicketId);
+        window.showToast('Reply sent to the user.', 'success');
+    } catch (e) {
+        window.showToast(e.message || 'Reply failed.', 'error');
+    }
+}
+
+async function closeActiveTicket() {
+    if (!currentAdminTicketId) return;
+    const confirmed = await window.showConfirm({
+        title: 'Close ticket?',
+        message: 'Users will still see the history, but only admins can manage closed tickets.',
+        confirmText: 'Close ticket',
+        cancelText: 'Keep open',
+        danger: true,
+    });
+    if (!confirmed) return;
+    try {
+        await apiJson(`/api/admin/tickets/${currentAdminTicketId}/close`, { method: 'POST' });
+        await loadAdminTickets(currentAdminTicketId);
+        loadStats();
+        window.showToast('Ticket closed.', 'success');
+    } catch (e) {
+        window.showToast(e.message || 'Close failed.', 'error');
+    }
+}
+
+function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+function handleLogout() { window.clearAuth(); window.location.href = '/login'; }
+
+async function runAdminPoll() {
+    if (adminPollInFlight || document.hidden) {
+        scheduleAdminPolling();
+        return;
+    }
+    adminPollInFlight = true;
+    try {
+        const activeTab = currentTabName();
+        if (activeTab === 'overview' || activeTab === 'tickets') await loadStats();
+        if (activeTab === 'users') await loadUsers(document.getElementById('user-search').value || '');
+        if (activeTab === 'keys') await loadKeys(document.getElementById('key-search')?.value || '');
+        if (activeTab === 'updates') await loadAdminUpdates();
+        if (activeTab === 'tickets') await loadAdminTickets(currentAdminTicketId);
+    } finally {
+        adminPollInFlight = false;
+        scheduleAdminPolling();
+    }
+}
+
+function scheduleAdminPolling(delay = ADMIN_POLL_INTERVAL_MS) {
+    if (adminPollHandle) clearTimeout(adminPollHandle);
+    adminPollHandle = setTimeout(runAdminPoll, delay);
+}
+
+function initAdminPolling() {
+    scheduleAdminPolling();
+}
+
+// Snow
+(function() {
+    const canvas = document.getElementById('snow-canvas');
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!canvas || prefersReducedMotion) return;
+    const ctx = canvas.getContext('2d');
+    let W, H, flakes = [];
+    let lastFrame = 0;
+    function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+    resize();
+    window.addEventListener('resize', resize);
+    for (let i = 0; i < 24; i++) flakes.push({ x: Math.random() * 3000, y: Math.random() * 3000, r: Math.random() * 1.5 + 0.3, s: Math.random() * 0.4 + 0.1, d: Math.random() * 0.8 + 0.2, o: Math.random() * 0.25 + 0.05 });
+    function draw(now = 0) {
+        if (document.hidden) {
+            requestAnimationFrame(draw);
+            return;
+        }
+        if (now - lastFrame < SNOW_FRAME_MS) {
+            requestAnimationFrame(draw);
+            return;
+        }
+        lastFrame = now;
+        ctx.clearRect(0, 0, W, H);
+        flakes.forEach((f) => {
+            ctx.save();
+            ctx.globalAlpha = f.o;
+            ctx.fillStyle = '#fff';
+            ctx.beginPath();
+            ctx.arc(f.x % W, f.y % H, f.r, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+            f.y += f.s;
+            f.x += Math.sin(f.y / 80) * f.d;
+            if (f.y > H) { f.y = -5; f.x = Math.random() * W; }
+        });
+        requestAnimationFrame(draw);
+    }
+    draw();
+})();
+
+loadStats();
+initAdminPolling();
+document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) scheduleAdminPolling(1000);
+});
+</script>
+</body>
+</html>

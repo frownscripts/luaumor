@@ -1,0 +1,23 @@
+[Unit]
+Description=Delta Premium FastAPI Service
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/container
+EnvironmentFile=-/home/container/.env
+Environment=ENABLE_EMBEDDED_DISCORD_BOT=0
+Environment=ENABLE_STARTUP_ROLE_SYNC=0
+Environment=ENABLE_PERIODIC_ROLE_SYNC=0
+Environment=SESSION_CLEANUP_INTERVAL_SECONDS=21600
+ExecStart=/usr/bin/env python3 -m uvicorn main:app --host 127.0.0.1 --port 9745
+Restart=always
+RestartSec=5
+TimeoutStopSec=30
+MemoryMax=500M
+CPUQuota=70%
+TasksMax=256
+Nice=5
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up — Delta Premium</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="auth-body">
+<canvas id="snow-canvas"></canvas>
+
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-logo">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            Delta Premium
+        </div>
+        <h1 class="auth-title">Create Account</h1>
+        <p class="auth-sub">A license key is required to register. Buy your key first, then create your account with a username and password.</p>
+
+        <form class="auth-form" onsubmit="handleSignup(event)">
+            <div id="signup-error" class="auth-error" style="display:none"></div>
+            <div id="signup-success" class="auth-success" style="display:none"></div>
+
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" id="su-username" placeholder="Choose a username (3–24 chars)" autocomplete="username" required minlength="3" maxlength="24">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <div class="input-with-icon">
+                    <input type="password" id="su-password" placeholder="At least 6 characters" autocomplete="new-password" required minlength="6">
+                    <button type="button" class="pw-toggle" onclick="togglePw('su-password')">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    </button>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>License Key</label>
+                <input type="text" id="su-key" placeholder="DELTAM-XXXX-XXXX-XXXX-XXXX" style="font-family:monospace;letter-spacing:0.05em;" required>
+                <span class="form-hint">Your key is used to activate your plan and will not be reusable.</span>
+            </div>
+
+            <button type="submit" class="auth-submit" id="signup-submit">
+                <span class="btn-text">Create Account &amp; Activate</span>
+                <div class="btn-loader" style="display:none"></div>
+            </button>
+        </form>
+
+        <div class="auth-divider"><span>next</span></div>
+        <div class="discord-login-btn discord-login-btn--outline" style="cursor:default;opacity:.95">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
+            After signup, link Discord inside your dashboard to keep your plan on the same account.
+        </div>
+
+        <div class="auth-footer">Already have an account? <a href="/login">Sign in</a></div>
+    </div>
+    <div class="auth-back"><a href="/">&larr; Back to Home</a></div>
+</div>
+
+<script>
+function togglePw(id) {
+    const input = document.getElementById(id);
+    input.type = input.type === 'password' ? 'text' : 'password';
+}
+
+async function handleSignup(e) {
+    e.preventDefault();
+    const errEl = document.getElementById('signup-error');
+    const sucEl = document.getElementById('signup-success');
+    const btn = document.getElementById('signup-submit');
+    errEl.style.display = 'none';
+    sucEl.style.display = 'none';
+    btn.querySelector('.btn-text').style.display = 'none';
+    btn.querySelector('.btn-loader').style.display = 'inline-block';
+    btn.disabled = true;
+    try {
+        const res = await fetch('/api/auth/signup', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                username: document.getElementById('su-username').value.trim(),
+                password: document.getElementById('su-password').value,
+                license_key: document.getElementById('su-key').value.trim().toUpperCase()
+            })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || 'Signup failed');
+        localStorage.setItem('dp_token', data.token);
+        localStorage.setItem('dp_role', data.role || 'user');
+        localStorage.setItem('dp_username', data.username);
+        sucEl.textContent = `Account created! Activating your ${data.plan} plan...`;
+        sucEl.style.display = 'block';
+        setTimeout(() => { window.location.href = '/dashboard'; }, 1200);
+    } catch(err) {
+        errEl.textContent = err.message;
+        errEl.style.display = 'block';
+        btn.querySelector('.btn-text').style.display = 'inline';
+        btn.querySelector('.btn-loader').style.display = 'none';
+        btn.disabled = false;
+    }
+}
+
+// Snow
+(function(){
+    const canvas = document.getElementById('snow-canvas');
+    const ctx = canvas.getContext('2d');
+    let W, H, flakes = [];
+    function resize(){ W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+    resize(); window.addEventListener('resize', resize);
+    for(let i=0;i<80;i++) flakes.push({x:Math.random()*2000,y:Math.random()*2000,r:Math.random()*2+0.5,s:Math.random()*0.6+0.2,d:Math.random()*1.2+0.2,o:Math.random()*0.4+0.1});
+    function draw(){
+        ctx.clearRect(0,0,W,H);
+        flakes.forEach(f=>{
+            ctx.save(); ctx.globalAlpha=f.o; ctx.fillStyle='#fff';
+            ctx.beginPath(); ctx.arc(f.x%W,f.y%H,f.r,0,Math.PI*2); ctx.fill(); ctx.restore();
+            f.y+=f.s; f.x+=Math.sin(f.y/80)*f.d;
+            if(f.y>H){f.y=-5;f.x=Math.random()*W;}
+        });
+        requestAnimationFrame(draw);
+    }
+    draw();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delta Premium — iOS Direct Install</title>
+    <meta name="description" content="Delta IOS Premium — Get premium direct install access for Delta iOS. No sideloading required. Monthly and Lifetime plans available.">
+    <meta name="robots" content="index, follow">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<canvas id="snow-canvas"></canvas>
+
+<!-- Navbar -->
+<nav class="navbar" id="navbar">
+    <div class="nav-inner">
+        <span class="nav-brand">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            Delta Premium
+        </span>
+        <div class="nav-links">
+            <a href="#plans">Plans</a>
+            <a href="#features">Features</a>
+            <a href="#faq">FAQ</a>
+            <a href="https://discord.gg/KJFT4n7UPN" target="_blank" class="nav-discord">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
+                Discord
+            </a>
+            <a href="/login" class="btn-nav-login">Login</a>
+            <a href="/signup" class="btn-nav-signup">Get Access</a>
+        </div>
+        <button class="nav-mobile-toggle" onclick="toggleMobileNav()">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+    </div>
+    <div class="mobile-nav" id="mobileNav">
+        <a href="#plans">Plans</a>
+        <a href="#features">Features</a>
+        <a href="#faq">FAQ</a>
+        <a href="/login">Login</a>
+        <a href="/signup" class="mobile-cta">Get Access →</a>
+    </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+    <div class="hero-orb orb1"></div>
+    <div class="hero-orb orb2"></div>
+    <div class="hero-orb orb3"></div>
+    <div class="hero-content">
+        <div class="hero-badge">
+            <span class="badge-dot"></span>
+            Premium Access Now Available
+        </div>
+        <h1 class="hero-title">
+            Delta iOS<br>
+            <span class="gradient-text">Premium</span>
+        </h1>
+        <p class="hero-desc">
+            The official premium Delta iOS Direct Install — no sideloading, no computer required.<br>
+            Instant access, maximum uptime, and dedicated support included.
+        </p>
+        <div class="hero-actions">
+            <a href="#plans" class="btn btn-primary btn-lg">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                View Plans
+            </a>
+            <a href="https://discord.gg/KJFT4n7UPN" target="_blank" class="btn btn-ghost btn-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
+                Join Discord
+            </a>
+        </div>
+        <div class="hero-stats">
+            <div class="hstat"><span class="hstat-n">99.99%</span><span class="hstat-l">Uptime</span></div>
+            <div class="hstat-div"></div>
+            <div class="hstat"><span class="hstat-n">24/7</span><span class="hstat-l">Support</span></div>
+            <div class="hstat-div"></div>
+            <div class="hstat"><span class="hstat-n">Instant</span><span class="hstat-l">Updates</span></div>
+            <div class="hstat-div"></div>
+            <div class="hstat"><span class="hstat-n">No PC</span><span class="hstat-l">Required</span></div>
+        </div>
+    </div>
+</section>
+
+<!-- Plans Section -->
+<section id="plans" class="section plans-section">
+    <div class="container">
+        <div class="section-header">
+            <span class="eyebrow">Choose Your Plan</span>
+            <h2 class="section-title">Premium Access Plans</h2>
+            <p class="section-sub">Get Delta iOS Premium — the most affordable premium executor access on iOS.</p>
+        </div>
+        <div class="plans-grid">
+
+            <!-- Monthly Plan -->
+            <div class="plan-card">
+                <div class="plan-header">
+                    <div class="plan-icon plan-icon-blue">
+                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    </div>
+                    <div>
+                        <div class="plan-label">Monthly</div>
+                        <div class="plan-name">Delta IOS Premium</div>
+                    </div>
+                </div>
+                <div class="plan-price">
+                    <span class="plan-cost">$1</span>
+                    <span class="plan-per">/month</span>
+                </div>
+                <p class="plan-desc">
+                    Looking for premium Delta iOS Direct Install? We've launched Delta iOS Premium for just <strong>$1/month</strong> — the most affordable way to get premium executor access on iOS.
+                </p>
+                <ul class="plan-features">
+                    <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> No Sideloading App Required</li>
+                    <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Affordable — Only $1/Month</li>
+                    <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Safe &amp; Secure Installation</li>
+                    <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> 24/7 Customer Support</li>
+                    <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> 99.99% Uptime Guarantee</li>
+                    <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Instant Updates &amp; Patches</li>
+                    <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> iOS 15+ Direct Install</li>
+                    <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Discord Premium Role</li>
+                    <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Premium Dashboard Access</li>
+                    <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> 30-Day Access Period</li>
+                </ul>
+                <a href="https://hazelshop.mysellauth.com/product/delta-premium-access" target="_blank" rel="noopener" class="plan-btn plan-btn-blue">
+                    Get Monthly Access
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                </a>
+                <p class="plan-note">Buy your key, then sign up with username, password, and that key.</p>
+            </div>
+
+            <!-- Lifetime Plan -->
+            <div class="plan-card plan-card-featured">
+                <div class="plan-badge-top">Most Popular</div>
+                <div class="plan-header">
+                    <div class="plan-icon plan-icon-purple">
+                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    </div>
+                    <div>
+                        <div class="plan-label">Lifetime</div>
+                        <div class="plan-name">Delta IOS Premium</div>
+                    </div>
+                </div>
+                <div class="plan-price">
+                    <span class="plan-cost plan-cost-purple">$5</span>
+                    <span class="plan-per">one-time</span>
+                </div>
+                <p class="plan-desc">
+                    Pay once, access forever. Delta iOS Premium Lifetime gives you <strong>permanent access</strong> to Delta iOS Direct Install — all features, all updates, zero recurring fees.
+                </p>
+                <ul class="plan-features">
+                    <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Everything in Monthly, Plus:</li>
+                    <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Lifetime Access — Pay Once</li>
+                    <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Priority Customer Support</li>
+                    <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Exclusive Lifetime Discord Role</li>
+                    <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Early Access to New Features</li>
+                    <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> All Future Updates Included</li>
+                    <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Zero Recurring Charges</li>
+                    <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> VIP Support Channel Access</li>
+                    <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> No Sideloading Required</li>
+                    <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> iOS 15+ Direct Install</li>
+                </ul>
+                <a href="https://hazelshop.mysellauth.com/product/delta-premium-access" target="_blank" rel="noopener" class="plan-btn plan-btn-purple">
+                    Get Lifetime Access
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                </a>
+                <p class="plan-note">Buy your key first, then create your account and activate it at signup.</p>
+            </div>
+
+        </div>
+        <p class="plans-note-bottom">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            A license key is required at signup. Use the buy buttons above to get your key first, then sign up and link Discord later from your dashboard.
+        </p>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section id="features" class="section section-alt">
+    <div class="container">
+        <div class="section-header">
+            <span class="eyebrow">Why Delta Premium?</span>
+            <h2 class="section-title">Everything You Need</h2>
+            <p class="section-sub">Delta iOS Premium is the most complete executor experience available on iOS — no PC, no jailbreak, no hassle.</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon" style="background:linear-gradient(135deg,#6366f1,#8b5cf6)">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                </div>
+                <h3>Secure by Design</h3>
+                <p>All installations are verified and protected. Your device and account stay safe with our hardened distribution pipeline.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon" style="background:linear-gradient(135deg,#3b82f6,#06b6d4)">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                </div>
+                <h3>Lightning Fast</h3>
+                <p>Direct install via our global CDN. No waiting, no ads, no task locks. One tap to install on any supported iOS device.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon" style="background:linear-gradient(135deg,#10b981,#06b6d4)">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                </div>
+                <h3>Instant Updates</h3>
+                <p>Our team patches Delta immediately after every Roblox update. You'll always have the latest working version — automatically.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon" style="background:linear-gradient(135deg,#f59e0b,#ef4444)">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+                </div>
+                <h3>No PC Required</h3>
+                <p>Install directly from Safari. No Sideloadly, AltStore, or computer required. Works straight from your iPhone or iPad.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon" style="background:linear-gradient(135deg,#8b5cf6,#ec4899)">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                </div>
+                <h3>Priority Support</h3>
+                <p>Dedicated support team available 24/7 via Discord. Lifetime members get a VIP support channel for fastest response times.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon" style="background:linear-gradient(135deg,#06b6d4,#3b82f6)">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                </div>
+                <h3>Premium Dashboard</h3>
+                <p>Manage your subscription, view transactions, track your access status, and read the latest updates — all in one place.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ Section -->
+<section id="faq" class="section">
+    <div class="container">
+        <div class="section-header">
+            <span class="eyebrow">Got Questions?</span>
+            <h2 class="section-title">Frequently Asked</h2>
+        </div>
+        <div class="faq-list">
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    How do I get a license key?
+                    <svg class="faq-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="faq-answer-wrap"><div class="faq-answer">Purchase a key via our <a href="https://discord.gg/KJFT4n7UPN" target="_blank">Discord server</a>. Join, open a ticket, and choose your plan (Monthly $1 or Lifetime $5). Your key will be delivered via DM.</div></div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    What happens when my monthly key expires?
+                    <svg class="faq-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="faq-answer-wrap"><div class="faq-answer">Your install button and download access are automatically suspended after 30 days. Your account stays active so you can log in and renew with a new key. Your Discord premium role is also automatically removed.</div></div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    Is the Lifetime plan really forever?
+                    <svg class="faq-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="faq-answer-wrap"><div class="faq-answer">Yes! The Lifetime plan is a one-time payment of $5. You will never be charged again and your access will never expire. All future updates are included.</div></div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    Do I need to jailbreak my iPhone?
+                    <svg class="faq-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="faq-answer-wrap"><div class="faq-answer">No jailbreak required. Delta Premium uses official iOS provisioning profiles for direct installation. Works on any standard iPhone or iPad running iOS 15+.</div></div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    Can I use my Discord account to log in?
+                    <svg class="faq-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="faq-answer-wrap"><div class="faq-answer">Yes, but only after you first create a normal account with a username, password, and key. Then link Discord inside your dashboard. After that, Discord login will use the same account and keep your plan attached to it.</div></div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    Is the install URL secure and private?
+                    <svg class="faq-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="faq-answer-wrap"><div class="faq-answer">Absolutely. The install link is never exposed in page source or network requests visible to unauthenticated users. It is only served by our secure backend API to verified premium members with an active key.</div></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="container">
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <span class="footer-logo">Delta Premium</span>
+                <p>The most affordable premium iOS executor access.</p>
+            </div>
+            <div class="footer-cols">
+                <div class="footer-col">
+                    <div class="footer-col-title">Product</div>
+                    <a href="#plans">Plans &amp; Pricing</a>
+                    <a href="#features">Features</a>
+                    <a href="/dashboard">Dashboard</a>
+                </div>
+                <div class="footer-col">
+                    <div class="footer-col-title">Account</div>
+                    <a href="/login">Login</a>
+                    <a href="/signup">Sign Up</a>
+                    <a href="/dashboard">My Dashboard</a>
+                </div>
+                <div class="footer-col">
+                    <div class="footer-col-title">Community</div>
+                    <a href="https://discord.gg/KJFT4n7UPN" target="_blank">Discord Server</a>
+                    <a href="#faq">FAQ</a>
+                    <a href="https://discord.gg/KJFT4n7UPN" target="_blank">Support</a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="footer-socials">
+                <a href="https://discord.gg/KJFT4n7UPN" target="_blank" title="Discord">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
+                </a>
+            </div>
+            <p>&copy; 2026 Delta Premium. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+
+<script>
+function toggleFaq(btn) {
+    const item = btn.parentElement;
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item.open').forEach(el => el.classList.remove('open'));
+    if (!isOpen) item.classList.add('open');
+}
+function toggleMobileNav() {
+    document.getElementById('mobileNav').classList.toggle('open');
+}
+window.addEventListener('scroll', () => {
+    document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 20);
+});
+
+// Snow
+(function(){
+    const canvas = document.getElementById('snow-canvas');
+    const ctx = canvas.getContext('2d');
+    let W, H, flakes = [];
+    function resize(){ W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+    resize();
+    window.addEventListener('resize', resize);
+    for(let i=0;i<120;i++) flakes.push({
+        x: Math.random()*2000, y: Math.random()*2000,
+        r: Math.random()*2.5+0.5, s: Math.random()*0.8+0.2,
+        d: Math.random()*1.5+0.3, o: Math.random()*0.5+0.1
+    });
+    function draw(){
+        ctx.clearRect(0,0,W,H);
+        ctx.fillStyle='rgba(255,255,255,0.85)';
+        flakes.forEach(f=>{
+            ctx.save();
+            ctx.globalAlpha = f.o;
+            ctx.beginPath();
+            ctx.arc(f.x%W, f.y%H, f.r, 0, Math.PI*2);
+            ctx.fill();
+            ctx.restore();
+            f.y += f.s;
+            f.x += Math.sin(f.y/80)*f.d;
+            if(f.y > H) { f.y = -5; f.x = Math.random()*W; }
+        });
+        requestAnimationFrame(draw);
+    }
+    draw();
+})();
+</script>
+</body>
+</html>

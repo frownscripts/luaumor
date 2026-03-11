@@ -1,0 +1,20 @@
+[Unit]
+Description=Delta Premium Discord Bot
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/container
+EnvironmentFile=-/home/container/.env
+Environment=ROLE_SYNC_INTERVAL_MINUTES=30
+ExecStart=/usr/bin/env python3 bot.py
+Restart=always
+RestartSec=5
+TimeoutStopSec=30
+MemoryMax=300M
+CPUQuota=40%
+TasksMax=128
+Nice=5
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,1503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard — Delta Premium</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta name="robots" content="noindex,nofollow">
+    <style>
+    .db-welcome-banner{background:linear-gradient(135deg,rgba(99,102,241,.18),rgba(139,92,246,.12) 50%,rgba(59,130,246,.1));border:1px solid rgba(99,102,241,.25);border-radius:20px;padding:2rem 2.5rem;display:flex;align-items:center;gap:1.75rem;margin-bottom:1.75rem;position:relative;overflow:hidden}
+    .db-welcome-banner::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 0% 50%,rgba(99,102,241,.12),transparent 60%);pointer-events:none}
+    .db-welcome-avatar{width:68px;height:68px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,#6366f1,#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:1.6rem;font-weight:800;color:#fff;border:3px solid rgba(99,102,241,.4);box-shadow:0 0 20px rgba(99,102,241,.35);overflow:hidden}
+    .db-welcome-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+    .db-welcome-text{flex:1;min-width:0}
+    .db-welcome-greeting{font-size:.8rem;color:var(--muted2);font-weight:500;text-transform:uppercase;letter-spacing:.1em;margin-bottom:.2rem}
+    .db-welcome-name{font-size:1.8rem;font-weight:900;color:#fff;letter-spacing:-.04em;margin-bottom:.15rem;line-height:1.1}
+    .db-welcome-discord{font-size:.85rem;color:#a78bfa;display:flex;align-items:center;gap:.35rem}
+    .db-welcome-badge{padding:.35rem 1rem;border-radius:50px;font-size:.78rem;font-weight:700;display:flex;align-items:center;gap:.4rem;flex-shrink:0}
+    .db-welcome-badge.active{background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.35);color:#34d399}
+    .db-welcome-badge.inactive{background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.35);color:#f87171}
+    .db-welcome-badge .badge-pulse{width:7px;height:7px;border-radius:50%}
+    .db-welcome-badge.active .badge-pulse{background:#10b981;box-shadow:0 0 6px #10b981;animation:pulse 2s infinite}
+    .db-welcome-badge.inactive .badge-pulse{background:#ef4444}
+    .db-main-grid{display:grid;grid-template-columns:1fr 320px;gap:1.25rem;margin-bottom:1.75rem}
+    .db-install-card{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:18px;padding:2rem;position:relative;overflow:hidden}
+    .db-install-card::before{content:'';position:absolute;top:-60px;right:-60px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(99,102,241,.12),transparent 70%);pointer-events:none}
+    .db-install-card-title{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:1.25rem}
+    .db-install-status-row{display:flex;align-items:center;gap:.75rem;margin-bottom:1rem}
+    .db-install-status-orb{width:14px;height:14px;border-radius:50%;flex-shrink:0}
+    .orb-active{background:#10b981;box-shadow:0 0 12px rgba(16,185,129,.6);animation:pulse 2s infinite}
+    .orb-inactive{background:#ef4444;box-shadow:0 0 8px rgba(239,68,68,.4)}
+    .db-install-status-text{font-size:1.1rem;font-weight:700}
+    .db-install-status-text.active{color:#34d399}
+    .db-install-status-text.inactive{color:#f87171}
+    .db-install-desc{font-size:.875rem;color:var(--muted2);line-height:1.65;margin-bottom:1.5rem}
+    .db-install-desc a{color:var(--accent);text-decoration:none}
+    .db-big-install-btn{width:100%;padding:1.1rem 1.5rem;border-radius:16px;display:flex;align-items:center;justify-content:center;gap:.75rem;font-size:1rem;font-weight:800;border:none;cursor:pointer;transition:all .3s cubic-bezier(.4,0,.2,1);letter-spacing:-.01em;position:relative;overflow:hidden}
+    .db-big-install-btn.enabled{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;box-shadow:0 8px 32px rgba(99,102,241,.45)}
+    .db-big-install-btn.enabled:hover{transform:translateY(-3px);box-shadow:0 16px 40px rgba(99,102,241,.6)}
+    .db-big-install-btn.disabled{background:rgba(255,255,255,.06);color:var(--muted);cursor:not-allowed;box-shadow:none}
+    .db-install-inline-err{color:#f87171;font-size:.8rem;margin-top:.6rem;text-align:center}
+    .db-countdown{margin-top:1.25rem;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:12px;padding:1rem 1.25rem}
+    .db-countdown-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:.5rem}
+    .db-countdown-blocks{display:flex;gap:.6rem;align-items:center}
+    .db-countdown-unit{text-align:center;background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.2);border-radius:9px;padding:.4rem .7rem;min-width:50px}
+    .db-countdown-num{font-size:1.3rem;font-weight:800;color:#a5b4fc;line-height:1}
+    .db-countdown-sub{font-size:.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-top:.2rem}
+    .db-countdown-sep{color:var(--muted);font-size:1.2rem;font-weight:700;margin-bottom:6px}
+    .db-countdown-expired{color:#f87171;font-size:.875rem;text-align:center}
+    .db-stats-side{display:flex;flex-direction:column;gap:1.25rem}
+    .db-stat-mini{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:16px;padding:1.25rem 1.5rem;display:flex;align-items:center;gap:1rem;transition:border-color .2s}
+    .db-stat-mini:hover{border-color:var(--border-h)}
+    .db-stat-mini-icon{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .mini-icon-indigo{background:rgba(99,102,241,.15);color:#818cf8}
+    .mini-icon-green{background:rgba(16,185,129,.15);color:#34d399}
+    .mini-icon-purple{background:rgba(139,92,246,.15);color:#a78bfa}
+    .mini-icon-blue{background:rgba(59,130,246,.15);color:#60a5fa}
+    .db-stat-mini-label{font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:.2rem}
+    .db-stat-mini-value{font-size:1.05rem;font-weight:800;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .db-stat-mini-value.clr-green{color:#34d399}
+    .db-stat-mini-value.clr-purple{color:#a78bfa}
+    .db-txn-strip{display:flex;gap:1rem;overflow-x:auto;padding-bottom:.25rem}
+    .db-txn-strip::-webkit-scrollbar{height:4px}
+    .db-txn-card{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:14px;padding:1rem 1.25rem;min-width:180px;flex-shrink:0}
+    .db-txn-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem}
+    .db-txn-amount{font-size:1.1rem;font-weight:800;color:#34d399}
+    .db-txn-date{font-size:.72rem;color:var(--muted)}
+    .db-txn-plan{font-size:.8rem;color:var(--muted2);text-transform:capitalize}
+    .db-update-card-new{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:16px;padding:1.5rem;transition:all .25s;position:relative;overflow:hidden}
+    .db-update-card-new:hover{border-color:var(--border-h);transform:translateY(-2px);box-shadow:0 12px 24px rgba(0,0,0,.3)}
+    .db-update-card-new.pinned{border-color:rgba(99,102,241,.35);background:rgba(99,102,241,.06)}
+    .db-update-card-new.pinned::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#6366f1,#8b5cf6)}
+    .db-update-top{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:.75rem;flex-wrap:wrap}
+    .db-update-when{font-size:.75rem;color:var(--muted);flex-shrink:0}
+    .db-update-headline{font-size:1.05rem;font-weight:700;color:#fff;margin-bottom:.5rem}
+    .db-update-body{font-size:.875rem;color:var(--muted2);line-height:1.7}
+    .db-update-footer{margin-top:.75rem;font-size:.75rem;color:var(--muted);display:flex;align-items:center;gap:.4rem}
+    .db-profile-hero{display:flex;align-items:center;gap:1.5rem;margin-bottom:1.5rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border)}
+    .db-profile-avatar{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:1.8rem;font-weight:800;color:#fff;border:3px solid rgba(99,102,241,.4);flex-shrink:0;overflow:hidden}
+    .db-profile-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+    .db-profile-hero-name{font-size:1.4rem;font-weight:800;color:#fff;margin-bottom:.2rem;letter-spacing:-.02em}
+    .db-profile-hero-sub{font-size:.85rem;color:var(--muted2)}
+    .db-field-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+    .db-field{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:12px;padding:.9rem 1.1rem}
+    .db-field-label{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);margin-bottom:.3rem}
+    .db-field-val{font-size:.9rem;color:#fff;font-weight:500}
+    .db-settings-section-title{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:.75rem}
+    .db-key-input-row{display:flex;gap:.75rem}
+    .db-key-input-row input{flex:1;padding:.8rem 1rem;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:12px;color:var(--text);font-size:.875rem;font-family:monospace;outline:none;letter-spacing:.05em;transition:border-color .2s}
+    .db-key-input-row input:focus{border-color:var(--accent)}
+    .download-hub{display:grid;gap:1.2rem}
+    .download-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem}
+    .download-metric-card{background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.025));border:1px solid var(--border);border-radius:18px;padding:1.2rem 1.25rem;position:relative;overflow:hidden;transform:translateY(0);transition:transform .22s ease,border-color .22s ease,box-shadow .22s ease}
+    .download-metric-card:hover{transform:translateY(-3px);border-color:var(--border-h);box-shadow:0 18px 40px rgba(0,0,0,.22)}
+    .download-metric-card::before{content:'';position:absolute;inset:auto -40px -55px auto;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,rgba(96,165,250,.12),transparent 68%);pointer-events:none}
+    .download-metric-label{font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:.5rem}
+    .download-metric-value{font-size:1.55rem;font-weight:900;color:#fff;letter-spacing:-.04em}
+    .download-metric-copy{margin-top:.35rem;font-size:.82rem;color:var(--muted2);line-height:1.55}
+    .download-hero{background:linear-gradient(135deg,rgba(14,165,233,.12),rgba(99,102,241,.15) 45%,rgba(244,114,182,.12));border:1px solid rgba(96,165,250,.24);border-radius:24px;padding:1.5rem 1.5rem 1.35rem;position:relative;overflow:hidden}
+    .download-hero::after{content:'';position:absolute;inset:-30% auto auto 58%;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.09),transparent 70%);pointer-events:none}
+    .download-hero-top{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:1rem}
+    .download-hero-title{font-size:1.55rem;font-weight:900;color:#fff;letter-spacing:-.04em}
+    .download-hero-copy{max-width:44rem;font-size:.92rem;line-height:1.7;color:#dbe7ff}
+    .download-method-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}
+    .download-method-card{background:rgba(7,12,24,.52);border:1px solid rgba(148,163,184,.16);border-radius:20px;padding:1.25rem;position:relative;overflow:hidden;transition:transform .24s ease,border-color .24s ease,box-shadow .24s ease}
+    .download-method-card:hover{transform:translateY(-4px);border-color:rgba(129,140,248,.34);box-shadow:0 20px 36px rgba(2,6,23,.35)}
+    .download-method-card::before{content:'';position:absolute;inset:auto auto -70px -60px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(129,140,248,.08),transparent 70%);pointer-events:none}
+    .download-method-top{display:flex;align-items:center;justify-content:space-between;gap:.8rem;margin-bottom:.9rem}
+    .download-method-icon{width:42px;height:42px;border-radius:14px;display:flex;align-items:center;justify-content:center;background:rgba(129,140,248,.12);color:#c4b5fd;box-shadow:inset 0 0 0 1px rgba(129,140,248,.16)}
+    .download-method-badge{padding:.38rem .72rem;border-radius:999px;font-size:.7rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+    .download-method-badge.secure{background:rgba(16,185,129,.12);color:#6ee7b7;border:1px solid rgba(16,185,129,.22)}
+    .download-method-badge.manual{background:rgba(245,158,11,.12);color:#fcd34d;border:1px solid rgba(245,158,11,.22)}
+    .download-method-title{font-size:1.08rem;font-weight:800;color:#fff;letter-spacing:-.03em;margin-bottom:.35rem}
+    .download-method-copy{font-size:.86rem;color:var(--muted2);line-height:1.65;margin-bottom:1rem;min-height:4.2rem}
+    .download-method-meta{display:flex;flex-wrap:wrap;gap:.55rem;margin-bottom:1rem}
+    .download-method-chip{padding:.35rem .62rem;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid rgba(148,163,184,.14);font-size:.72rem;color:#cbd5e1}
+    .download-method-btn{width:100%}
+    .download-instructions{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:20px;padding:1.25rem 1.35rem}
+    .download-instructions-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}
+    .download-instruction{background:rgba(255,255,255,.03);border:1px solid rgba(148,163,184,.12);border-radius:16px;padding:1rem 1.05rem}
+    .download-step{font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#a5b4fc;margin-bottom:.35rem}
+    .download-note{margin-top:.9rem;padding:.9rem 1rem;border-radius:14px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.16);font-size:.82rem;color:#fecaca;line-height:1.6}
+    .settings-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:1rem}
+    .settings-panel{background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));border:1px solid var(--border);border-radius:20px;padding:1.35rem;position:relative;overflow:hidden}
+    .settings-panel::before{content:'';position:absolute;inset:auto -40px -50px auto;width:140px;height:140px;border-radius:50%;background:radial-gradient(circle,rgba(129,140,248,.1),transparent 72%);pointer-events:none}
+    .settings-panel-copy{font-size:.88rem;color:var(--muted2);line-height:1.7;margin-bottom:1rem;max-width:40rem}
+    .settings-link-card{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap;padding:1rem 1.05rem;border-radius:16px;background:rgba(88,101,242,.09);border:1px solid rgba(88,101,242,.2)}
+    .settings-link-status{display:flex;align-items:center;gap:.8rem}
+    .settings-link-pill{padding:.38rem .7rem;border-radius:999px;background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.22);color:#6ee7b7;font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em}
+    .settings-security-list{display:grid;gap:.85rem}
+    .settings-security-item{padding:.95rem 1rem;border-radius:16px;background:rgba(255,255,255,.03);border:1px solid rgba(148,163,184,.13)}
+    .settings-security-title{font-size:.86rem;font-weight:800;color:#fff;margin-bottom:.25rem}
+    .settings-security-copy{font-size:.82rem;color:var(--muted2);line-height:1.6}
+    .altgen-card{min-height:360px;display:flex;align-items:center;justify-content:center;text-align:center;background:radial-gradient(circle at top,rgba(99,102,241,.18),rgba(15,23,42,.96) 60%),linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.01));border:1px solid rgba(129,140,248,.24);border-radius:28px;padding:2rem;position:relative;overflow:hidden}
+    .altgen-card::before,.altgen-card::after{content:'';position:absolute;border-radius:50%;filter:blur(6px);pointer-events:none}.altgen-card::before{width:240px;height:240px;top:-80px;left:-70px;background:rgba(96,165,250,.12)}.altgen-card::after{width:220px;height:220px;bottom:-90px;right:-60px;background:rgba(244,114,182,.12)}
+    .altgen-kicker{font-size:.82rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#c4b5fd;margin-bottom:.8rem}
+    .altgen-title{font-size:clamp(2.6rem,7vw,4.8rem);font-weight:950;letter-spacing:-.08em;color:#fff;line-height:.92;margin-bottom:.9rem;text-shadow:0 14px 38px rgba(99,102,241,.24)}
+    .altgen-copy{max-width:34rem;font-size:1rem;line-height:1.7;color:#cbd5e1;margin:0 auto}
+    @keyframes liftFade{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+    .download-metric-card,.download-method-card,.settings-panel,.altgen-card{animation:liftFade .45s ease both}
+    @media(max-width:900px){.db-main-grid{grid-template-columns:1fr}.db-welcome-banner{flex-wrap:wrap;padding:1.5rem}.db-welcome-name{font-size:1.4rem}}
+    @media(max-width:900px){.download-metrics,.download-method-grid,.download-instructions-grid,.settings-grid{grid-template-columns:1fr}}
+    @media(max-width:600px){.db-field-grid{grid-template-columns:1fr}.db-txn-card{min-width:150px}.download-hero{padding:1.15rem}.download-method-card,.settings-panel{padding:1.05rem}.download-hero-title{font-size:1.3rem}}
+    </style>
+</head>
+<body class="db-body">
+<canvas id="snow-canvas"></canvas>
+
+<div class="db-layout">
+    <!-- Sidebar -->
+    <aside class="db-sidebar" id="sidebar">
+        <div class="db-sidebar-header">
+            <span class="db-brand">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                User Panel
+            </span>
+            <button class="sidebar-close" onclick="toggleSidebar()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+        <nav class="db-nav">
+            <button class="db-nav-item active" onclick="showTab('dashboard', this)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                Home
+            </button>
+            <button class="db-nav-item" onclick="showTab('download', this)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Download
+            </button>
+            <button class="db-nav-item" onclick="showTab('altgen', this)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 3l2.4 4.86L20 9l-4 3.9.94 5.6L12 16l-4.94 2.5L8 12.9 4 9l5.6-1.14L12 3z"/></svg>
+                Alt Gen
+            </button>
+            <button class="db-nav-item" onclick="showTab('subscription', this)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                Subscription
+            </button>
+            <button class="db-nav-item" onclick="showTab('updates', this)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                Updates
+                <span class="nav-badge" id="updates-badge" style="display:none">!</span>
+            </button>
+            <button class="db-nav-item" onclick="showTab('tickets', this)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                Tickets
+                <span class="nav-badge" id="tickets-badge" style="display:none">!</span>
+            </button>
+            <button class="db-nav-item" onclick="showTab('profile', this)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                Profile
+            </button>
+            <button class="db-nav-item" onclick="showTab('settings', this)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                Settings
+            </button>
+        </nav>
+        <div class="db-sidebar-footer">
+            <div class="db-user-info">
+                <div class="db-avatar" id="sidebar-avatar">?</div>
+                <div class="db-user-details">
+                    <div class="db-user-name" id="sidebar-username">Loading...</div>
+                    <div class="db-user-discord" id="sidebar-discord" style="font-size:.72rem;color:#a78bfa;display:none"></div>
+                    <div class="db-user-role" id="sidebar-role">Member</div>
+                </div>
+            </div>
+            <div class="db-sidebar-actions">
+                <button class="db-sidebar-link" onclick="showTab('profile', null)">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    Update profile
+                </button>
+                <button class="db-sidebar-link logout-link" onclick="handleLogout()">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                    Logout
+                </button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Mobile overlay -->
+    <div class="db-overlay" id="db-overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Main content -->
+    <main class="db-main">
+        <!-- Top bar -->
+        <div class="db-topbar">
+            <button class="db-menu-toggle" onclick="toggleSidebar()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            </button>
+            <span class="db-topbar-title" id="topbar-title">Home</span>
+            <div class="db-topbar-right">
+                <a href="/" class="db-home-link" title="Back to home">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                </a>
+            </div>
+        </div>
+
+        <!-- ── HOME TAB ────────────────────────────────────────── -->
+        <div id="tab-dashboard" class="db-tab active">
+
+            <!-- Welcome banner -->
+            <div class="db-welcome-banner">
+                <div class="db-welcome-avatar" id="welcome-avatar">?</div>
+                <div class="db-welcome-text">
+                    <div class="db-welcome-greeting">Welcome back</div>
+                    <div class="db-welcome-name" id="welcome-name">—</div>
+                    <div class="db-welcome-discord" id="welcome-discord" style="display:none">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="#a78bfa"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
+                        <span id="welcome-discord-tag"></span>
+                    </div>
+                </div>
+                <div class="db-welcome-badge" id="welcome-badge">
+                    <span class="badge-pulse"></span>
+                    <span id="welcome-badge-text">Checking...</span>
+                </div>
+            </div>
+            <div id="discord-deadline-banner" class="db-card" style="display:none;background:linear-gradient(135deg,rgba(245,158,11,.14),rgba(239,68,68,.12));border:1px solid rgba(245,158,11,.28);border-radius:18px;padding:1rem 1.2rem;margin-bottom:1.2rem">
+                <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap">
+                    <div>
+                        <div style="font-size:.78rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:#fbbf24;margin-bottom:.3rem">Discord linking required</div>
+                        <div id="discord-deadline-text" style="font-size:.9rem;color:#fde68a;line-height:1.65"></div>
+                    </div>
+                    <button class="db-btn-primary" onclick="beginDiscordLink()">Link Discord</button>
+                </div>
+            </div>
+
+            <!-- Main 2-column grid -->
+            <div class="db-main-grid">
+                <!-- Left: Access & Install card -->
+                <div class="db-install-card">
+                    <div class="db-install-card-title">Access &amp; Install</div>
+                    <div class="db-install-status-row">
+                        <div class="db-install-status-orb orb-inactive" id="install-orb"></div>
+                        <div class="db-install-status-text inactive" id="install-status-text">No Access</div>
+                    </div>
+                    <p class="db-install-desc" id="install-desc">You don't have an active plan. Redeem a key in Settings or <a href="https://hazelshop.mysellauth.com/product/delta-premium-access" target="_blank" rel="noopener">purchase access</a> to install Delta iOS.</p>
+                    <button class="db-big-install-btn disabled" id="install-btn" onclick="handleInstall()" disabled>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        Install Delta iOS
+                    </button>
+                    <div class="db-install-inline-err" id="install-error" style="display:none"></div>
+                    <!-- Countdown — shown only when key is active AND has an expiry -->
+                    <div class="db-countdown" id="countdown-block" style="display:none">
+                        <div class="db-countdown-label">Key Expires In</div>
+                        <div class="db-countdown-blocks" id="countdown-blocks"></div>
+                        <div class="db-countdown-expired" id="countdown-expired" style="display:none">Access expired. Please renew.</div>
+                    </div>
+                </div>
+
+                <!-- Right: mini stat cards -->
+                <div class="db-stats-side">
+                    <div class="db-stat-mini">
+                        <div class="db-stat-mini-icon mini-icon-indigo">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        </div>
+                        <div>
+                            <div class="db-stat-mini-label">Current Plan</div>
+                            <div class="db-stat-mini-value clr-purple" id="mini-plan">—</div>
+                        </div>
+                    </div>
+                    <div class="db-stat-mini">
+                        <div class="db-stat-mini-icon mini-icon-green">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                        </div>
+                        <div>
+                            <div class="db-stat-mini-label">Total Spent</div>
+                            <div class="db-stat-mini-value clr-green" id="mini-spent">$0.00</div>
+                        </div>
+                    </div>
+                    <div class="db-stat-mini">
+                        <div class="db-stat-mini-icon mini-icon-blue">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                        </div>
+                        <div>
+                            <div class="db-stat-mini-label">Transactions</div>
+                            <div class="db-stat-mini-value" id="mini-txn">0</div>
+                        </div>
+                    </div>
+                    <div class="db-stat-mini">
+                        <div class="db-stat-mini-icon mini-icon-purple">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                        </div>
+                        <div>
+                            <div class="db-stat-mini-label">Member Since</div>
+                            <div class="db-stat-mini-value" id="mini-since">—</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent transactions strip -->
+            <div class="db-card" style="background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:18px;padding:1.5rem">
+                <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:1rem">Recent Transactions</div>
+                <div class="db-txn-strip" id="txn-strip">
+                    <div style="color:var(--muted);font-size:.875rem">No transactions yet.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── DOWNLOAD TAB ──────────────────────────────────── -->
+        <div id="tab-download" class="db-tab">
+            <div class="db-page-header">
+                <h1>Download</h1>
+                <p>Secure install hub for iOS, Android, and the updated IPA page.</p>
+            </div>
+            <div class="download-hub">
+                <div class="download-metrics">
+                    <div class="download-metric-card">
+                        <div class="download-metric-label">Global Downloads</div>
+                        <div class="download-metric-value" id="download-global-count">0</div>
+                        <div class="download-metric-copy">All secure installs launched through the dashboard.</div>
+                    </div>
+                    <div class="download-metric-card">
+                        <div class="download-metric-label">Active Users 24H</div>
+                        <div class="download-metric-value" id="download-active-users">0</div>
+                        <div class="download-metric-copy">Accounts that signed in during the last 24 hours.</div>
+                    </div>
+                    <div class="download-metric-card">
+                        <div class="download-metric-label">Your Downloads</div>
+                        <div class="download-metric-value" id="download-personal-count">0</div>
+                        <div class="download-metric-copy">Personal launches tracked to your account only.</div>
+                    </div>
+                </div>
+                <div class="download-hero">
+                    <div class="download-hero-top">
+                        <div>
+                            <div class="live-pill" id="download-status-kicker">Secure Delivery Locked</div>
+                            <div class="download-hero-title">Choose Your Install Route</div>
+                        </div>
+                    </div>
+                    <div class="download-hero-copy" id="download-status-copy">Each download route is issued as a short-lived signed launch from your account instead of exposing the raw delivery link in the page.</div>
+                    <div class="download-method-grid" style="margin-top:1.1rem">
+                        <div class="download-method-card">
+                            <div class="download-method-top">
+                                <div class="download-method-icon">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 20V4"/><path d="M7 9l5-5 5 5"/><rect x="4" y="17" width="16" height="3" rx="1.5"/></svg>
+                                </div>
+                                <span class="download-method-badge secure">Signed</span>
+                            </div>
+                            <div class="download-method-title">iOS Install</div>
+                            <div class="download-method-copy">Primary OTA install route for supported iPhone and iPad devices.</div>
+                            <div class="download-method-meta">
+                                <span class="download-method-chip">One-time launch</span>
+                                <span class="download-method-chip">Short-lived token</span>
+                            </div>
+                            <button class="db-big-install-btn disabled download-method-btn" id="download-ios-ota-btn" onclick="handleSecureDownload('ios_ota','download-ios-ota-btn','download-error-box')" disabled>
+                                Install Delta iOS
+                            </button>
+                        </div>
+                        <div class="download-method-card">
+                            <div class="download-method-top">
+                                <div class="download-method-icon">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 7h16"/><path d="M7 12h10"/><path d="M9 17h6"/></svg>
+                                </div>
+                                <span class="download-method-badge secure">Method 2</span>
+                            </div>
+                            <div class="download-method-title">Direct Install Method 2</div>
+                            <div class="download-method-copy">Alternate signed OTA route for users who need a second install path.</div>
+                            <div class="download-method-meta">
+                                <span class="download-method-chip">Token-gated</span>
+                                <span class="download-method-chip">Single-use</span>
+                            </div>
+                            <button class="db-big-install-btn disabled download-method-btn" id="download-ios-direct-btn" onclick="handleSecureDownload('ios_direct','download-ios-direct-btn','download-error-box')" disabled>
+                                Open Method 2
+                            </button>
+                        </div>
+                        <div class="download-method-card">
+                            <div class="download-method-top">
+                                <div class="download-method-icon">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 16V8a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v8"/><path d="M8 16h8"/><path d="M9 4h6"/></svg>
+                                </div>
+                                <span class="download-method-badge secure">Android</span>
+                            </div>
+                            <div class="download-method-title">Android APK</div>
+                            <div class="download-method-copy">Direct APK delivery for Android devices through the same secure launch flow.</div>
+                            <div class="download-method-meta">
+                                <span class="download-method-chip">APK delivery</span>
+                                <span class="download-method-chip">Tracked to account</span>
+                            </div>
+                            <button class="db-big-install-btn disabled download-method-btn" id="download-android-btn" onclick="handleSecureDownload('android_apk','download-android-btn','download-error-box')" disabled>
+                                Download Android APK
+                            </button>
+                        </div>
+                        <div class="download-method-card">
+                            <div class="download-method-top">
+                                <div class="download-method-icon">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
+                                </div>
+                                <span class="download-method-badge manual">Updated IPA</span>
+                            </div>
+                            <div class="download-method-title">Latest IPA Page</div>
+                            <div class="download-method-copy">Open the updated IPA page when you need the newest manual install files.</div>
+                            <div class="download-method-meta">
+                                <span class="download-method-chip">Manual install route</span>
+                                <span class="download-method-chip">Updated listing</span>
+                            </div>
+                            <button class="db-big-install-btn disabled download-method-btn" id="download-ipa-btn" onclick="handleSecureDownload('ios_ipa_page','download-ipa-btn','download-error-box')" disabled>
+                                Open IPA Page
+                            </button>
+                        </div>
+                    </div>
+                    <div class="db-install-inline-err" id="download-error-box" style="display:none"></div>
+                </div>
+                <div class="download-instructions">
+                    <div class="db-settings-section-title">Install Instructions</div>
+                    <div class="download-instructions-grid">
+                        <div class="download-instruction">
+                            <div class="download-step">For iOS OTA</div>
+                            <div class="download-metric-copy">Tap either iOS install method from Safari, allow the profile prompt, then finish the trust step in iPhone settings if Apple asks.</div>
+                        </div>
+                        <div class="download-instruction">
+                            <div class="download-step">For Android APK</div>
+                            <div class="download-metric-copy">Download the APK, allow installs from this source if Android asks, then open the file and complete the install.</div>
+                        </div>
+                        <div class="download-instruction">
+                            <div class="download-step">For Updated IPA</div>
+                            <div class="download-metric-copy">Use the IPA page when you need the latest file for manual sideload methods like ESign, Scarlet, or other signer workflows.</div>
+                        </div>
+                        <div class="download-instruction">
+                            <div class="download-step">Security Note</div>
+                            <div class="download-metric-copy">Links are launched through your authenticated account with short-lived signed redirects and one-time use tokens to reduce direct scraping and sharing.</div>
+                        </div>
+                    </div>
+                    <div class="download-note">If a launch expires, return here and tap the button again. That is expected and is part of the link hardening.</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-altgen" class="db-tab">
+            <div class="db-page-header">
+                <h1>Alt Gen</h1>
+                <p>Early preview for the upcoming generator area.</p>
+            </div>
+            <div class="altgen-card">
+                <div style="position:relative;z-index:1">
+                    <div class="altgen-kicker">Next Feature Drop</div>
+                    <div class="altgen-title">COMING SOON!!!</div>
+                    <div class="altgen-copy">Alt Gen is being built as a separate experience. This section will go live in a future update once the workflow and protections are finalized.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── SUBSCRIPTION TAB ──────────────────────────────── -->
+        <div id="tab-subscription" class="db-tab">
+            <div class="db-page-header">
+                <h1>Subscription</h1>
+                <p>Your plan details and full transaction history.</p>
+            </div>
+            <div style="background:linear-gradient(135deg,rgba(99,102,241,.15),rgba(139,92,246,.1));border:1px solid rgba(99,102,241,.25);border-radius:18px;padding:1.25rem 1.75rem;margin-bottom:1.25rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap">
+                <div style="font-size:.875rem;color:var(--muted2)">Purchase or renew access at our official store.</div>
+                <a href="https://hazelshop.mysellauth.com/product/delta-premium-access" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:.5rem;padding:.65rem 1.25rem;background:rgba(99,102,241,.2);border:1px solid rgba(99,102,241,.35);color:#a5b4fc;font-size:.82rem;font-weight:700;border-radius:10px;text-decoration:none;white-space:nowrap;transition:all .2s" onmouseover="this.style.background='rgba(99,102,241,.35)'" onmouseout="this.style.background='rgba(99,102,241,.2)'">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                    Visit Store
+                </a>
+            </div>
+            <div class="db-card" style="background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:18px;padding:1.75rem;margin-bottom:1.25rem">
+                <div class="db-install-card-title">Plan Details</div>
+                <div id="plan-details-block" class="db-plan-details"></div>
+            </div>
+            <div class="db-card" style="background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:18px;padding:1.75rem">
+                <div class="db-install-card-title">All Transactions</div>
+                <div class="db-table-wrap">
+                    <table class="db-table">
+                        <thead><tr><th>Amount</th><th>Plan</th><th>Status</th><th>Date</th></tr></thead>
+                        <tbody id="all-transactions-body">
+                            <tr><td colspan="4" class="db-table-empty">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── UPDATES TAB ───────────────────────────────────── -->
+        <div id="tab-updates" class="db-tab">
+            <div class="db-page-header">
+                <h1>Updates</h1>
+                <p>Latest news, patch notes and announcements from the Delta team.</p>
+            </div>
+            <div id="updates-feed" class="db-updates-feed">
+                <div class="db-loading">Loading updates...</div>
+            </div>
+        </div>
+
+        <!-- ── TICKETS TAB ───────────────────────────────────── -->
+        <div id="tab-tickets" class="db-tab">
+            <div class="db-page-header">
+                <h1>Tickets</h1>
+                <p>Create support tickets and follow replies live.</p>
+            </div>
+            <div class="ticket-create-card">
+                <div class="db-settings-section-title">New Support Ticket</div>
+                <div class="ticket-create-grid">
+                    <input type="text" id="ticket-subject" placeholder="Subject">
+                    <select id="ticket-category">
+                        <option value="support">Support</option>
+                        <option value="billing">Billing</option>
+                        <option value="account">Account</option>
+                        <option value="bug">Bug Report</option>
+                    </select>
+                </div>
+                <textarea id="ticket-message" rows="4" placeholder="Describe what you need help with..."></textarea>
+                <div style="margin-top:.9rem;display:flex;justify-content:flex-end">
+                    <button class="db-btn-primary" onclick="createTicket()">Create Ticket</button>
+                </div>
+            </div>
+            <div class="tickets-grid">
+                <div class="tickets-list" id="tickets-list">
+                    <div class="db-loading">Loading tickets...</div>
+                </div>
+                <div>
+                    <div class="ticket-thread" id="ticket-thread">
+                        <div class="db-loading">Select a ticket to view the conversation.</div>
+                    </div>
+                    <div class="ticket-compose-card" id="ticket-reply-card" style="display:none">
+                        <div class="db-settings-section-title">Reply</div>
+                        <textarea id="ticket-reply-message" rows="4" placeholder="Type your reply..."></textarea>
+                        <div style="margin-top:.9rem;display:flex;justify-content:flex-end">
+                            <button class="db-btn-primary" onclick="replyToTicket()">Send Reply</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── PROFILE TAB ────────────────────────────────────── -->
+        <div id="tab-profile" class="db-tab">
+            <div class="db-page-header">
+                <h1>Profile</h1>
+                <p>Your account overview.</p>
+            </div>
+            <div class="db-card" style="background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:18px;padding:1.75rem">
+                <div class="db-profile-hero">
+                    <div class="db-profile-avatar" id="profile-avatar">?</div>
+                    <div>
+                        <div class="db-profile-hero-name" id="profile-hero-name">—</div>
+                        <div class="db-profile-hero-sub" id="profile-hero-sub">—</div>
+                    </div>
+                </div>
+                <div class="db-field-grid" id="profile-info"></div>
+                <div style="margin-top:1.5rem;padding-top:1.25rem;border-top:1px solid var(--border)">
+                    <div class="db-install-card-title" style="margin-bottom:.85rem">Discord Connection</div>
+                    <div id="discord-info-block" style="display:none;align-items:center;gap:.75rem;background:rgba(88,101,242,.1);border:1px solid rgba(88,101,242,.25);border-radius:12px;padding:.9rem 1.2rem">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#5865F2" style="flex-shrink:0"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
+                        <span id="discord-user-label" style="flex:1;font-size:.875rem;color:#a5b4fc"></span>
+                    </div>
+                    <div id="discord-connect-block" style="display:none">
+                        <button type="button" onclick="beginDiscordLink()" class="db-discord-link" style="display:inline-flex;align-items:center;gap:.65rem;padding:.8rem 1.4rem;background:rgba(88,101,242,.15);border:1px solid rgba(88,101,242,.3);border-radius:12px;color:#a5b4fc;font-size:.875rem;font-weight:600;text-decoration:none;transition:all .2s">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
+                            Link Discord Account
+                        </button>
+                        <p style="margin-top:.65rem;font-size:.78rem;color:var(--muted)">Linking Discord lets you sign in with Discord and receive roles automatically.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── SETTINGS TAB ───────────────────────────────────── -->
+        <div id="tab-settings" class="db-tab">
+            <div class="db-page-header">
+                <h1>Settings</h1>
+                <p>Redeem access, manage Discord linking, and keep your account secure.</p>
+            </div>
+            <div class="settings-grid">
+                <div class="settings-panel">
+                    <div class="db-settings-section-title">Access Vault</div>
+                    <div class="settings-panel-copy">Activate your access here, then return to the Download tab to use the secure signed install routes.</div>
+                    <div style="background:linear-gradient(135deg,rgba(99,102,241,.18),rgba(139,92,246,.12));border:1px solid rgba(99,102,241,.3);border-radius:18px;padding:1.2rem 1.25rem;margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap">
+                        <div>
+                            <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#a78bfa;margin-bottom:.35rem">Need a key?</div>
+                            <div style="font-size:1.02rem;font-weight:800;color:#fff;margin-bottom:.2rem">Purchase Monthly or Lifetime Access</div>
+                            <div style="font-size:.82rem;color:var(--muted2)">Instant delivery through the official store.</div>
+                        </div>
+                        <a href="https://hazelshop.mysellauth.com/product/delta-premium-access" target="_blank" rel="noopener" class="db-btn-primary" style="text-decoration:none">Buy a Key</a>
+                    </div>
+                    <div class="db-key-input-row">
+                        <input type="text" id="redeem-key-input" placeholder="DELTAM-XXXX-XXXX-XXXX-XXXX">
+                        <button onclick="handleRedeem()" class="db-btn-primary">Redeem</button>
+                    </div>
+                    <div id="redeem-msg" style="margin-top:.75rem;display:none"></div>
+                </div>
+                <div class="settings-panel">
+                    <div class="db-settings-section-title">Account Security</div>
+                    <div class="settings-security-list">
+                        <div class="settings-security-item">
+                            <div class="settings-security-title">Short-lived download launches</div>
+                            <div class="settings-security-copy">Every install method is issued from the backend with a short-lived signed token instead of placing the raw link directly in the dashboard.</div>
+                        </div>
+                        <div class="settings-security-item">
+                            <div class="settings-security-title">Discord protection</div>
+                            <div class="settings-security-copy">Link Discord for role sync and account continuity. If you unlink it, the system gives you a new 24 hour grace window before access pauses.</div>
+                        </div>
+                        <div class="settings-security-item">
+                            <div class="settings-security-title">Private account tracking</div>
+                            <div class="settings-security-copy">Your personal download count is tracked on your account to help detect abnormal usage without changing your normal install flow.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="settings-panel" style="margin-top:1rem">
+                <div class="db-settings-section-title">Discord Connection</div>
+                <div class="settings-panel-copy">Manage your Discord link for role sync, sign-in support, and account recovery continuity.</div>
+                <div id="settings-discord-linked" class="settings-link-card" style="display:none">
+                    <div class="settings-link-status">
+                        <span class="settings-link-pill">Linked</span>
+                        <div>
+                            <div style="font-size:.82rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:800">Connected account</div>
+                            <div id="settings-discord-name" style="font-size:1rem;font-weight:800;color:#fff"></div>
+                        </div>
+                    </div>
+                    <div style="display:flex;gap:.75rem;flex-wrap:wrap">
+                        <button type="button" id="settings-discord-relink" onclick="beginDiscordLink()" class="db-btn-secondary">Relink Discord</button>
+                        <button type="button" id="settings-discord-unlink" onclick="handleUnlinkDiscord()" class="db-btn-danger">Unlink Discord</button>
+                    </div>
+                </div>
+                <div id="settings-discord-connect" style="display:none">
+                    <div class="settings-link-card">
+                        <div>
+                            <div style="font-size:.82rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:800">No Discord linked</div>
+                            <div style="font-size:.96rem;font-weight:800;color:#fff;margin-top:.2rem">Connect Discord to keep installs, roles, and login recovery aligned.</div>
+                        </div>
+                        <button type="button" onclick="beginDiscordLink()" class="db-btn-primary">Link Discord</button>
+                    </div>
+                </div>
+                <div id="settings-discord-msg" style="margin-top:.75rem;display:none"></div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="db-footer">
+            <div class="db-footer-socials">
+                <a href="https://discord.gg/KJFT4n7UPN" target="_blank" title="Discord">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
+                </a>
+            </div>
+            <span>&copy; 2026 Delta Premium</span>
+        </footer>
+    </main>
+</div>
+
+<!-- Chat bubble -->
+<a href="https://discord.gg/KJFT4n7UPN" target="_blank" class="chat-bubble" title="Support">
+    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
+</a>
+
+<div class="announcement-overlay" id="announcement-overlay">
+    <div class="announcement-card">
+        <div class="announcement-topbar">
+            <div>
+                <div class="live-pill" style="margin-bottom:.65rem">Announcement</div>
+                <div class="announcement-title" id="announcement-title">Announcement</div>
+            </div>
+            <button class="announcement-close" onclick="closeAnnouncement()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+        <div class="announcement-meta">
+            <span class="update-category update-cat-announcement">announcement</span>
+            <span id="announcement-date" style="font-size:.78rem;color:var(--muted)"></span>
+        </div>
+        <div class="announcement-body" id="announcement-body"></div>
+        <div class="announcement-actions">
+            <button class="db-btn-secondary" onclick="showTab('updates', null); closeAnnouncement();">Open Updates</button>
+            <button class="db-btn-primary" onclick="closeAnnouncement()">Close</button>
+        </div>
+    </div>
+</div>
+
+<script src="/static/app.js"></script>
+<script>
+// ─── Auth check ────────────────────────────────────────────────
+(function() {
+    const hash = window.location.hash.startsWith('#') ? window.location.hash.slice(1) : '';
+    const hashParams = new URLSearchParams(hash);
+    const token = hashParams.get('discord_token');
+    const linked = hashParams.get('linked');
+    if (token) {
+        localStorage.setItem('dp_token', token);
+        if (linked === '1') sessionStorage.setItem('dp_discord_linked', '1');
+        history.replaceState(null, null, window.location.pathname);
+    }
+    if (!localStorage.getItem('dp_token')) window.location.href = '/login';
+})();
+
+const STORE_KEYS = {
+    updatesSeen: 'dp_updates_seen_id',
+};
+
+let dashData = null;
+let dashboardPollHandle = null;
+let dashboardPollInFlight = false;
+let currentTicketId = null;
+let currentTickets = [];
+let _countdownInterval = null;
+let _discordDeadlineInterval = null;
+let _currentAnnouncementId = null;
+
+const DASHBOARD_POLL_INTERVAL_MS = 20000;
+const SNOW_FRAME_MS = 1000 / 24;
+
+function escHtml(str) {
+    return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function formatDate(value, opts = { month: 'short', day: 'numeric', year: 'numeric' }) {
+    if (!value) return '—';
+    return new Date(value).toLocaleDateString('en-US', opts);
+}
+
+function formatRelativeCountdown(diffMs) {
+    const totalSeconds = Math.max(0, Math.floor(diffMs / 1000));
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+    return `${hours}h ${String(minutes).padStart(2, '0')}m ${String(seconds).padStart(2, '0')}s`;
+}
+
+function showDashboardMessage(message, isError = false) {
+    if (!message) return;
+    const msg = document.getElementById('redeem-msg');
+    if (msg) {
+        msg.className = isError ? 'auth-error' : 'auth-success';
+        msg.textContent = message;
+        msg.style.display = 'block';
+    }
+    if (window.showToast) window.showToast(message, isError ? 'error' : 'success');
+}
+
+function markLatestUpdateSeen(id) {
+    if (!id) return;
+    localStorage.setItem(STORE_KEYS.updatesSeen, String(id));
+}
+
+function getLatestUpdateSeen() {
+    return Number(localStorage.getItem(STORE_KEYS.updatesSeen) || '0');
+}
+
+function setUpdateBadge(show) {
+    const badge = document.getElementById('updates-badge');
+    if (badge) badge.style.display = show ? 'inline-flex' : 'none';
+}
+
+function setTicketBadge(show) {
+    const badge = document.getElementById('tickets-badge');
+    if (badge) badge.style.display = show ? 'inline-flex' : 'none';
+}
+
+async function beginDiscordLink() {
+    try {
+        const res = await window.authFetch('/api/auth/discord/link-url');
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || 'Could not start Discord link');
+        window.location.href = data.url;
+    } catch (e) {
+        showDashboardMessage(e.message, true);
+        showTab('settings', null);
+    }
+}
+
+const TAB_TITLES = {
+    dashboard: 'Home',
+    download: 'Download',
+    altgen: 'Alt Gen',
+    subscription: 'Subscription',
+    updates: 'Updates',
+    tickets: 'Tickets',
+    profile: 'Profile',
+    settings: 'Settings'
+};
+
+function showTab(name, btn) {
+    document.querySelectorAll('.db-tab').forEach((tab) => tab.classList.remove('active'));
+    document.querySelectorAll('.db-nav-item').forEach((item) => item.classList.remove('active'));
+    const tabEl = document.getElementById('tab-' + name);
+    if (tabEl) tabEl.classList.add('active');
+    document.getElementById('topbar-title').textContent = TAB_TITLES[name] || name;
+    if (btn) {
+        btn.classList.add('active');
+    } else {
+        document.querySelectorAll('.db-nav-item').forEach((item) => {
+            const click = item.getAttribute('onclick') || '';
+            if (click.includes(`'${name}'`)) item.classList.add('active');
+        });
+    }
+    if (name === 'updates') {
+        loadUpdates();
+        setUpdateBadge(false);
+    }
+    if (name === 'tickets') {
+        loadTickets(currentTicketId);
+        setTicketBadge(false);
+    }
+    if (window.innerWidth < 900) {
+        document.getElementById('sidebar').classList.remove('open');
+        document.getElementById('db-overlay').classList.remove('active');
+    }
+}
+
+function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('db-overlay').classList.toggle('active');
+}
+
+async function loadDashboard() {
+    try {
+        const res = await window.authFetch('/api/dashboard');
+        if (!res.ok) {
+            const error = await res.json().catch(() => ({}));
+            throw new Error(error.detail || 'Failed to load dashboard');
+        }
+        dashData = await res.json();
+        renderDashboard(dashData);
+        if (dashData.latest_announcement) showAnnouncement(dashData.latest_announcement);
+    } catch (e) {
+        console.error('Dashboard load error', e);
+        if (window.showToast) window.showToast(e.message || 'Dashboard failed to load.', 'error');
+    }
+}
+
+function renderDashboard(d) {
+    const initial = (d.username || d.discord_username || '?')[0].toUpperCase();
+    const avatarMarkup = d.discord_avatar
+        ? `<img src="${d.discord_avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`
+        : '';
+
+    const avatarEl = document.getElementById('sidebar-avatar');
+    avatarEl.innerHTML = avatarMarkup || '';
+    if (!avatarMarkup) avatarEl.textContent = initial;
+    document.getElementById('sidebar-username').textContent = d.username || d.discord_username || '—';
+    const sideDiscord = document.getElementById('sidebar-discord');
+    if (d.discord_username && d.username) {
+        sideDiscord.textContent = '⬡ ' + d.discord_username;
+        sideDiscord.style.display = 'block';
+    } else {
+        sideDiscord.style.display = 'none';
+    }
+    document.getElementById('sidebar-role').textContent = d.role === 'admin' ? 'Admin' : (d.access_active ? 'Premium Member' : 'Member');
+
+    const wAvatar = document.getElementById('welcome-avatar');
+    wAvatar.innerHTML = d.discord_avatar ? `<img src="${d.discord_avatar}">` : '';
+    if (!d.discord_avatar) wAvatar.textContent = initial;
+    document.getElementById('welcome-name').textContent = d.username || d.discord_username || '—';
+    const wDiscord = document.getElementById('welcome-discord');
+    if (d.discord_username) {
+        document.getElementById('welcome-discord-tag').textContent = d.discord_username;
+        wDiscord.style.display = 'flex';
+    } else {
+        wDiscord.style.display = 'none';
+    }
+
+    const badge = document.getElementById('welcome-badge');
+    const badgeTxt = document.getElementById('welcome-badge-text');
+    badge.className = d.access_active ? 'db-welcome-badge active' : 'db-welcome-badge inactive';
+    badgeTxt.textContent = d.access_active ? 'Active' : 'Inactive';
+
+    document.getElementById('mini-plan').textContent = d.plan_name || 'No Plan';
+    document.getElementById('mini-spent').textContent = '$' + (d.total_spent || 0).toFixed(2);
+    document.getElementById('mini-txn').textContent = d.transaction_count || 0;
+    document.getElementById('mini-since').textContent = d.created_at ? formatDate(d.created_at, { month: 'short', year: 'numeric' }) : '—';
+    updateGlobalDownloadCount(d.download_count || 0);
+    document.getElementById('download-active-users').textContent = Number(d.active_users_24h || 0).toLocaleString();
+    document.getElementById('download-personal-count').textContent = Number(d.personal_download_count || 0).toLocaleString();
+    document.getElementById('download-status-kicker').textContent = d.access_active ? 'Secure Delivery Ready' : 'Secure Delivery Locked';
+    document.getElementById('download-status-copy').textContent = d.access_active
+        ? 'All download methods below are available from your account with short-lived signed redirects.'
+        : 'Download routes stay locked until your plan is active and your account is eligible to install.';
+
+    const orb = document.getElementById('install-orb');
+    const statusTxt = document.getElementById('install-status-text');
+    const desc = document.getElementById('install-desc');
+    const btn = document.getElementById('install-btn');
+
+    resetExpiryCountdown();
+    if (d.access_active) {
+        orb.className = 'db-install-status-orb orb-active';
+        statusTxt.className = 'db-install-status-text active';
+        statusTxt.textContent = 'Active';
+        let descHTML = `Plan: <strong>${escHtml(d.plan_name || 'Delta Premium')}</strong>`;
+        if (d.expires_at) {
+            descHTML += ` &mdash; expires ${formatDate(d.expires_at, { month: 'long', day: 'numeric', year: 'numeric' })}`;
+            startCountdown(new Date(d.expires_at));
+        } else {
+            descHTML += ' &mdash; Lifetime access ♾️';
+        }
+        desc.innerHTML = descHTML;
+        btn.className = 'db-big-install-btn enabled';
+        btn.disabled = false;
+        setDownloadActionState(true);
+    } else {
+        orb.className = 'db-install-status-orb orb-inactive';
+        statusTxt.className = 'db-install-status-text inactive';
+        statusTxt.textContent = d.needs_discord_link ? 'Discord Required' : 'No Access';
+        desc.innerHTML = d.needs_discord_link
+            ? 'Your plan is still on this account, but installs are paused until you link your Discord account.'
+            : `You don't have an active plan. <a href="javascript:void(0)" onclick="showTab('settings',null)">Redeem a key</a> or <a href="https://hazelshop.mysellauth.com/product/delta-premium-access" target="_blank" rel="noopener" style="color:#a78bfa">purchase access</a>.`;
+        btn.className = 'db-big-install-btn disabled';
+        btn.disabled = true;
+        setDownloadActionState(false);
+    }
+
+    renderTxnStrip(d.transactions || []);
+    renderAllTransactions(d.transactions || []);
+    renderPlanDetails(d);
+    renderProfile(d, initial);
+    renderDiscordSections(d);
+    renderDiscordDeadline(d);
+}
+
+function renderPlanDetails(d) {
+    const planBlock = document.getElementById('plan-details-block');
+    if (!planBlock) return;
+    if (d.access_active) {
+        planBlock.innerHTML = `
+            <div class="db-plan-row"><span>Plan</span><strong>${escHtml(d.plan_name)}</strong></div>
+            <div class="db-plan-row"><span>Status</span><span class="db-badge db-badge-green">Active</span></div>
+            ${d.expires_at ? `<div class="db-plan-row"><span>Expires</span><strong>${formatDate(d.expires_at, { month: 'long', day: 'numeric', year: 'numeric' })}</strong></div>` : '<div class="db-plan-row"><span>Expires</span><strong>Never — Lifetime</strong></div>'}
+        `;
+    } else {
+        planBlock.innerHTML = `<div class="db-no-plan">${dashData && dashData.needs_discord_link ? 'Your plan is waiting for Discord linking.' : 'No active plan.'} <a href="javascript:void(0)" onclick="showTab('settings',null)">Open settings</a>.</div>`;
+    }
+}
+
+function renderProfile(d, initial) {
+    const profAvatar = document.getElementById('profile-avatar');
+    if (profAvatar) {
+        profAvatar.innerHTML = d.discord_avatar ? `<img src="${d.discord_avatar}">` : '';
+        if (!d.discord_avatar) profAvatar.textContent = initial;
+    }
+    document.getElementById('profile-hero-name').textContent = d.username || d.discord_username || '—';
+    document.getElementById('profile-hero-sub').textContent = d.role === 'admin' ? 'Administrator' : (d.access_active ? 'Premium Member' : 'Member');
+    document.getElementById('profile-info').innerHTML = `
+        <div class="db-field"><div class="db-field-label">Username</div><div class="db-field-val">${escHtml(d.username || '—')}</div></div>
+        <div class="db-field"><div class="db-field-label">Account Role</div><div class="db-field-val">${escHtml(d.role || 'member')}</div></div>
+        <div class="db-field"><div class="db-field-label">Active Plan</div><div class="db-field-val">${escHtml(d.plan_name || 'None')}</div></div>
+        <div class="db-field"><div class="db-field-label">Member Since</div><div class="db-field-val">${d.created_at ? formatDate(d.created_at, { month: 'long', day: 'numeric', year: 'numeric' }) : '—'}</div></div>
+    `;
+}
+
+function renderDiscordSections(d) {
+    if (d.discord_username || d.discord_id) {
+        const dib = document.getElementById('discord-info-block');
+        if (dib) {
+            dib.style.display = 'flex';
+            document.getElementById('discord-user-label').textContent = d.discord_username || 'Connected';
+        }
+        const dcb = document.getElementById('discord-connect-block');
+        if (dcb) dcb.style.display = 'none';
+        document.getElementById('settings-discord-linked').style.display = 'flex';
+        document.getElementById('settings-discord-name').textContent = d.discord_username || '';
+        document.getElementById('settings-discord-connect').style.display = 'none';
+    } else {
+        const dib = document.getElementById('discord-info-block');
+        if (dib) dib.style.display = 'none';
+        const dcb = document.getElementById('discord-connect-block');
+        if (dcb) dcb.style.display = 'block';
+        document.getElementById('settings-discord-linked').style.display = 'none';
+        document.getElementById('settings-discord-connect').style.display = 'block';
+    }
+}
+
+function setDownloadActionState(enabled) {
+    document.querySelectorAll('.download-method-btn').forEach((button) => {
+        button.disabled = !enabled;
+        button.className = enabled ? 'db-big-install-btn enabled download-method-btn' : 'db-big-install-btn disabled download-method-btn';
+    });
+}
+
+function renderDiscordDeadline(d) {
+    const banner = document.getElementById('discord-deadline-banner');
+    const text = document.getElementById('discord-deadline-text');
+    if (_discordDeadlineInterval) clearInterval(_discordDeadlineInterval);
+    if (!banner || !text) return;
+    const deadlineValue = d.discord_link_required_by;
+    if (d.discord_id || !deadlineValue) {
+        banner.style.display = 'none';
+        return;
+    }
+    const deadline = new Date(deadlineValue);
+    const updateBanner = () => {
+        const diff = deadline - new Date();
+        if (diff > 0) {
+            text.innerHTML = `Link your Discord within <strong>${formatRelativeCountdown(diff)}</strong> to keep your account active. Your plan and data stay on this same account.`;
+        } else {
+            text.innerHTML = 'Your account is currently inactive because Discord was not linked in time. Link Discord now to reactivate everything instantly without losing your plan or data.';
+        }
+        banner.style.display = 'block';
+    };
+    updateBanner();
+    _discordDeadlineInterval = setInterval(updateBanner, 1000);
+}
+
+function renderTxnStrip(txns) {
+    const strip = document.getElementById('txn-strip');
+    if (!strip) return;
+    if (!txns.length) {
+        strip.innerHTML = '<div style="color:var(--muted);font-size:.875rem">No transactions yet.</div>';
+        return;
+    }
+    strip.innerHTML = txns.slice(0, 6).map((t) => `
+        <div class="db-txn-card">
+            <div class="db-txn-card-top">
+                <span class="db-txn-amount">$${Number(t.amount || 0).toFixed(2)}</span>
+                <span class="db-txn-date">${formatDate(t.created_at)}</span>
+            </div>
+            <div class="db-txn-plan">${escHtml(t.plan || 'purchase')}</div>
+        </div>
+    `).join('');
+}
+
+function renderAllTransactions(txns) {
+    const tbody = document.getElementById('all-transactions-body');
+    if (!tbody) return;
+    if (!txns.length) {
+        tbody.innerHTML = '<tr><td colspan="4" class="db-table-empty">No transactions yet.</td></tr>';
+        return;
+    }
+    tbody.innerHTML = txns.map((t) => {
+        const badge = t.status === 'completed'
+            ? `<span class="db-badge db-badge-green">${escHtml(t.status)}</span>`
+            : `<span class="db-badge db-badge-gray">${escHtml(t.status || 'pending')}</span>`;
+        return `<tr><td>$${Number(t.amount || 0).toFixed(2)}</td><td>${escHtml(t.plan || '—')}</td><td>${badge}</td><td>${formatDate(t.created_at)}</td></tr>`;
+    }).join('');
+}
+
+function resetExpiryCountdown() {
+    const block = document.getElementById('countdown-block');
+    const blocksEl = document.getElementById('countdown-blocks');
+    const expiredEl = document.getElementById('countdown-expired');
+    if (_countdownInterval) clearInterval(_countdownInterval);
+    if (block) block.style.display = 'none';
+    if (blocksEl) {
+        blocksEl.style.display = 'flex';
+        blocksEl.innerHTML = '';
+    }
+    if (expiredEl) expiredEl.style.display = 'none';
+}
+
+function startCountdown(expDate) {
+    const block = document.getElementById('countdown-block');
+    const blocksEl = document.getElementById('countdown-blocks');
+    const expiredEl = document.getElementById('countdown-expired');
+    if (!block || !blocksEl || !expiredEl) return;
+    block.style.display = 'block';
+    const tick = () => {
+        const diff = expDate - new Date();
+        if (diff <= 0) {
+            blocksEl.style.display = 'none';
+            expiredEl.style.display = 'block';
+            clearInterval(_countdownInterval);
+            return;
+        }
+        const days = Math.floor(diff / 86400000);
+        const hrs = Math.floor((diff % 86400000) / 3600000);
+        const mins = Math.floor((diff % 3600000) / 60000);
+        const secs = Math.floor((diff % 60000) / 1000);
+        blocksEl.innerHTML = `
+            <div class="db-countdown-unit"><div class="db-countdown-num">${String(days).padStart(2,'0')}</div><div class="db-countdown-sub">Days</div></div>
+            <div class="db-countdown-sep">:</div>
+            <div class="db-countdown-unit"><div class="db-countdown-num">${String(hrs).padStart(2,'0')}</div><div class="db-countdown-sub">Hrs</div></div>
+            <div class="db-countdown-sep">:</div>
+            <div class="db-countdown-unit"><div class="db-countdown-num">${String(mins).padStart(2,'0')}</div><div class="db-countdown-sub">Min</div></div>
+            <div class="db-countdown-sep">:</div>
+            <div class="db-countdown-unit"><div class="db-countdown-num">${String(secs).padStart(2,'0')}</div><div class="db-countdown-sub">Sec</div></div>`;
+    };
+    tick();
+    _countdownInterval = setInterval(tick, 1000);
+}
+
+function updateGlobalDownloadCount(value) {
+    const formatted = Number(value || 0).toLocaleString();
+    document.querySelectorAll('#global-download-count, #download-global-count').forEach((el) => { el.textContent = formatted; });
+}
+
+async function handleInstall() {
+    await handleSecureDownload('ios_ota', 'install-btn', 'install-error');
+}
+
+async function handleSecureDownload(variant, buttonId, errorId) {
+    const btn = document.getElementById(buttonId);
+    const errIds = [errorId].filter(Boolean);
+    errIds.forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+    });
+    const originalHtml = btn ? btn.innerHTML : '';
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<div class="btn-spinner"></div> Verifying...';
+    }
+    try {
+        const res = await window.authFetch(`/api/downloads/${encodeURIComponent(variant)}`, { method: 'POST' });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || 'Access denied');
+        window.location.href = '/install/go/' + data.token;
+    } catch (e) {
+        errIds.forEach((id) => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.textContent = e.message;
+                el.style.display = 'block';
+            }
+        });
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = originalHtml;
+        }
+        if (window.showToast) window.showToast(e.message || 'Install could not start.', 'error');
+    }
+}
+
+async function handleUnlinkDiscord() {
+    const msg = document.getElementById('settings-discord-msg');
+    if (msg) msg.style.display = 'none';
+    const confirmed = await window.showConfirm({
+        title: 'Unlink Discord?',
+        message: 'This removes your Discord connection and role sync. You will get a fresh 24 hour grace window before access pauses.',
+        confirmText: 'Unlink Discord',
+        cancelText: 'Keep linked',
+        danger: true,
+    });
+    if (!confirmed) return;
+    try {
+        const res = await window.authFetch('/api/auth/discord/unlink', { method: 'POST' });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || 'Unlink failed');
+        if (msg) {
+            msg.className = 'auth-success';
+            msg.textContent = data.message || 'Discord unlinked.';
+            msg.style.display = 'block';
+        }
+        await loadDashboard();
+        window.showToast('Discord unlinked successfully.', 'success');
+    } catch (error) {
+        if (msg) {
+            msg.className = 'auth-error';
+            msg.textContent = error.message || 'Unlink failed';
+            msg.style.display = 'block';
+        }
+        window.showToast(error.message || 'Unlink failed.', 'error');
+    }
+}
+
+async function loadUpdates() {
+    const feed = document.getElementById('updates-feed');
+    if (!feed) return;
+    try {
+        const res = await window.authFetch('/api/updates');
+        const updates = await res.json();
+        if (!res.ok) throw new Error(updates.detail || 'Failed to load updates');
+        if (!updates.length) {
+            feed.innerHTML = '<div class="db-loading">No updates posted yet.</div>';
+            return;
+        }
+        markLatestUpdateSeen(updates[0].id);
+        feed.innerHTML = updates.map((u) => `
+            <div class="db-update-card-new ${u.pinned ? 'pinned' : ''}">
+                <div class="db-update-top">
+                    <span class="update-category update-cat-${u.category}">${escHtml(u.category)}</span>
+                    <span class="db-update-when">${formatDate(u.created_at)}</span>
+                </div>
+                <div class="db-update-headline">${escHtml(u.title)}</div>
+                <div class="db-update-body">${escHtml(u.content).replace(/\n/g, '<br>')}</div>
+                <div class="db-update-footer">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    ${escHtml(u.author)}${u.pinned ? ' &nbsp;📌 Pinned' : ''}
+                </div>
+            </div>
+        `).join('');
+    } catch (e) {
+        feed.innerHTML = '<div class="db-loading">Failed to load updates.</div>';
+    }
+}
+
+async function loadTickets(selectTicketId = null) {
+    const list = document.getElementById('tickets-list');
+    if (!list) return;
+    list.innerHTML = '<div class="db-loading">Loading tickets...</div>';
+    try {
+        const res = await window.authFetch('/api/tickets');
+        const tickets = await res.json();
+        if (!res.ok) throw new Error(tickets.detail || 'Failed to load tickets');
+        currentTickets = tickets;
+        renderTicketsList();
+        const nextId = selectTicketId || currentTicketId || (tickets[0] && tickets[0].id);
+        if (nextId) {
+            await openTicket(nextId, false);
+        } else {
+            renderEmptyTicketThread();
+        }
+    } catch (e) {
+        list.innerHTML = `<div class="db-loading">${escHtml(e.message || 'Failed to load tickets.')}</div>`;
+        renderEmptyTicketThread('Tickets could not be loaded right now.');
+    }
+}
+
+function renderTicketsList() {
+    const list = document.getElementById('tickets-list');
+    if (!list) return;
+    if (!currentTickets.length) {
+        list.innerHTML = '<div class="db-loading">No tickets yet. Create one above to contact support.</div>';
+        return;
+    }
+    list.innerHTML = currentTickets.map((ticket) => `
+        <button class="ticket-list-item ${ticket.id === currentTicketId ? 'active' : ''}" onclick="openTicket(${ticket.id})">
+            <div class="ticket-list-subject">${escHtml(ticket.subject)}</div>
+            <div class="ticket-list-meta">
+                <span>${escHtml(ticket.category || 'support')}</span>
+                <span class="db-badge ${ticket.status === 'open' ? 'db-badge-green' : 'db-badge-gray'}">${escHtml(ticket.status)}</span>
+            </div>
+            <div class="ticket-list-preview">${escHtml(ticket.last_message || 'No messages yet')}</div>
+        </button>
+    `).join('');
+}
+
+function renderEmptyTicketThread(message = 'Select a ticket to view the conversation.') {
+    const thread = document.getElementById('ticket-thread');
+    const replyCard = document.getElementById('ticket-reply-card');
+    if (thread) thread.innerHTML = `<div class="db-loading">${escHtml(message)}</div>`;
+    if (replyCard) replyCard.style.display = 'none';
+}
+
+async function openTicket(ticketId, scrollToBottom = true) {
+    currentTicketId = ticketId;
+    renderTicketsList();
+    try {
+        const res = await window.authFetch(`/api/tickets/${ticketId}`);
+        const ticket = await res.json();
+        if (!res.ok) throw new Error(ticket.detail || 'Ticket not found');
+        renderTicketThread(ticket, scrollToBottom);
+        setTicketBadge(false);
+    } catch (e) {
+        renderEmptyTicketThread(e.message || 'Ticket could not be opened.');
+    }
+}
+
+function renderTicketThread(ticket, scrollToBottom = true) {
+    const thread = document.getElementById('ticket-thread');
+    const replyCard = document.getElementById('ticket-reply-card');
+    if (!thread) return;
+    thread.innerHTML = `
+        <div class="ticket-thread-header">
+            <div>
+                <div class="ticket-thread-title">${escHtml(ticket.subject)}</div>
+                <div class="ticket-list-meta">
+                    <span>${escHtml(ticket.category || 'support')}</span>
+                    <span>${formatDate(ticket.updated_at)}</span>
+                    <span class="db-badge ${ticket.status === 'open' ? 'db-badge-green' : 'db-badge-gray'}">${escHtml(ticket.status)}</span>
+                </div>
+            </div>
+        </div>
+        <div class="ticket-messages" id="ticket-messages">
+            ${(ticket.messages || []).map((message) => `
+                <div class="ticket-message ${message.author_role === 'admin' ? 'admin' : ''}">
+                    <div class="ticket-message-meta">
+                        <strong>${escHtml(message.username || (message.author_role === 'admin' ? 'Support' : 'You'))}</strong>
+                        <span>${formatDate(message.created_at, { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                    </div>
+                    <div class="ticket-message-body">${escHtml(message.message)}</div>
+                </div>
+            `).join('')}
+        </div>
+    `;
+    replyCard.style.display = ticket.status === 'open' ? 'block' : 'none';
+    if (ticket.status !== 'open') {
+        thread.insertAdjacentHTML('beforeend', '<div style="margin-top:1rem;color:var(--muted)">This ticket has been closed by support.</div>');
+    }
+    if (scrollToBottom) {
+        const messages = document.getElementById('ticket-messages');
+        if (messages) messages.scrollTop = messages.scrollHeight;
+    }
+}
+
+async function createTicket() {
+    const subject = document.getElementById('ticket-subject').value.trim();
+    const category = document.getElementById('ticket-category').value;
+    const message = document.getElementById('ticket-message').value.trim();
+    if (!subject || !message) {
+        window.showToast('Please enter a subject and message for your ticket.', 'error');
+        return;
+    }
+    try {
+        const res = await window.authFetch('/api/tickets', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ subject, category, message })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || 'Ticket could not be created');
+        document.getElementById('ticket-subject').value = '';
+        document.getElementById('ticket-message').value = '';
+        window.showToast('Support ticket created successfully.', 'success');
+        await loadTickets(data.id);
+        showTab('tickets', null);
+    } catch (e) {
+        window.showToast(e.message || 'Ticket could not be created.', 'error');
+    }
+}
+
+async function replyToTicket() {
+    const input = document.getElementById('ticket-reply-message');
+    const message = input.value.trim();
+    if (!currentTicketId) {
+        window.showToast('Select a ticket first.', 'error');
+        return;
+    }
+    if (!message) {
+        window.showToast('Reply message cannot be empty.', 'error');
+        return;
+    }
+    try {
+        const res = await window.authFetch(`/api/tickets/${currentTicketId}/reply`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || 'Reply failed');
+        input.value = '';
+        renderTicketThread(data);
+        await loadTickets(currentTicketId);
+        window.showToast('Reply sent.', 'success');
+    } catch (e) {
+        window.showToast(e.message || 'Reply failed.', 'error');
+    }
+}
+
+function showAnnouncement(update) {
+    if (!update || !update.id) return;
+    _currentAnnouncementId = update.id;
+    document.getElementById('announcement-title').textContent = update.title || 'Announcement';
+    document.getElementById('announcement-body').textContent = update.content || '';
+    document.getElementById('announcement-date').textContent = formatDate(update.created_at);
+    document.getElementById('announcement-overlay').classList.add('show');
+    setUpdateBadge(true);
+}
+
+function closeAnnouncement() {
+    document.getElementById('announcement-overlay').classList.remove('show');
+}
+
+async function runDashboardPoll() {
+    if (dashboardPollInFlight || document.hidden) {
+        scheduleDashboardPolling();
+        return;
+    }
+    dashboardPollInFlight = true;
+    try {
+        await loadDashboard();
+        if (document.getElementById('tab-updates').classList.contains('active')) await loadUpdates();
+        if (document.getElementById('tab-tickets').classList.contains('active')) await loadTickets(currentTicketId);
+    } finally {
+        dashboardPollInFlight = false;
+        scheduleDashboardPolling();
+    }
+}
+
+function scheduleDashboardPolling(delay = DASHBOARD_POLL_INTERVAL_MS) {
+    if (dashboardPollHandle) clearTimeout(dashboardPollHandle);
+    dashboardPollHandle = setTimeout(runDashboardPoll, delay);
+}
+
+function initDashboardPolling() {
+    scheduleDashboardPolling();
+}
+
+async function handleRedeem() {
+    const input = document.getElementById('redeem-key-input');
+    const msgEl = document.getElementById('redeem-msg');
+    msgEl.style.display = 'none';
+    if (!input.value.trim()) return;
+    try {
+        const res = await window.authFetch('/api/redeem-key', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ key_code: input.value.trim().toUpperCase() })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || 'Redeem failed');
+        msgEl.className = 'auth-success';
+        msgEl.style.display = 'block';
+        msgEl.textContent = `✅ Key redeemed! Plan: ${data.plan}${data.expires_at ? ' — Expires: ' + data.expires_at.slice(0, 10) : ' — Lifetime'}`;
+        input.value = '';
+        window.showToast('Key redeemed successfully.', 'success');
+        setTimeout(loadDashboard, 800);
+    } catch (e) {
+        msgEl.className = 'auth-error';
+        msgEl.style.display = 'block';
+        msgEl.textContent = e.message;
+        window.showToast(e.message || 'Redeem failed.', 'error');
+    }
+}
+
+function handleLogout() {
+    window.clearAuth();
+    window.location.href = '/login';
+}
+
+(function() {
+    const canvas = document.getElementById('snow-canvas');
+    if (!canvas) return;
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) return;
+    const ctx = canvas.getContext('2d');
+    let W, H, flakes = [];
+    let lastFrame = 0;
+    function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+    resize();
+    window.addEventListener('resize', resize);
+    for (let i = 0; i < 44; i++) flakes.push({ x: Math.random() * 3000, y: Math.random() * 3000, r: Math.random() * 2 + 0.3, s: Math.random() * 0.5 + 0.15, d: Math.random() * 1 + 0.2, o: Math.random() * 0.35 + 0.05 });
+    function draw(now = 0) {
+        if (document.hidden) {
+            requestAnimationFrame(draw);
+            return;
+        }
+        if (now - lastFrame < SNOW_FRAME_MS) {
+            requestAnimationFrame(draw);
+            return;
+        }
+        lastFrame = now;
+        ctx.clearRect(0, 0, W, H);
+        flakes.forEach((f) => {
+            ctx.save();
+            ctx.globalAlpha = f.o;
+            ctx.fillStyle = '#fff';
+            ctx.beginPath();
+            ctx.arc(f.x % W, f.y % H, f.r, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+            f.y += f.s;
+            f.x += Math.sin(f.y / 80) * f.d;
+            if (f.y > H) { f.y = -5; f.x = Math.random() * W; }
+        });
+        requestAnimationFrame(draw);
+    }
+    draw();
+})();
+
+(async function init() {
+    await loadDashboard();
+    await loadTickets();
+    initDashboardPolling();
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) scheduleDashboardPolling(1000);
+    });
+    const params = new URLSearchParams(window.location.search);
+    const err = params.get('error');
+    if (sessionStorage.getItem('dp_discord_linked') === '1') {
+        sessionStorage.removeItem('dp_discord_linked');
+        showDashboardMessage('Discord linked successfully. Your plan and account data stayed on this same account.');
+    } else if (err) {
+        const messages = {
+            link_failed: 'Discord could not be linked. Please try again.',
+            discord_link_conflict: 'That Discord account is already linked to another full account.',
+        };
+        showDashboardMessage(messages[err] || 'An error occurred while linking Discord.', true);
+        history.replaceState(null, null, window.location.pathname);
+    }
+})();
+</script>
+</body>
+</html>
