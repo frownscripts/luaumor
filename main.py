@@ -14,11 +14,10 @@ from discord import app_commands
 from discord.ext import commands
 from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, RedirectResponse, Response
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
-from starlette.middleware.proxy_headers import ProxyHeadersMiddleware
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 
 from database import (
@@ -178,7 +177,6 @@ async def lifespan(app: FastAPI):
 app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None, lifespan=lifespan)
 bearer = HTTPBearer(auto_error=False)
 
-app.add_middleware(ProxyHeadersMiddleware)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=ALLOWED_ORIGINS,
@@ -778,6 +776,16 @@ async def _app_lifespan(app: FastAPI):
 @app.get("/", response_class=HTMLResponse)
 async def root():
     return HTMLResponse(read_static_html("index.html"))
+
+
+@app.get("/favicon.ico", include_in_schema=False)
+async def favicon_ico():
+    return Response(status_code=204)
+
+
+@app.get("/favicon.png", include_in_schema=False)
+async def favicon_png():
+    return Response(status_code=204)
 
 
 @app.get("/login", response_class=HTMLResponse)
