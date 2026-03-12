@@ -81,11 +81,11 @@ def _to_int(value: str, default: int = 0) -> int:
         return default
 
 
-DEFAULT_SITE_DOMAIN = "https://luaumor.vercel.app"
+DEFAULT_SITE_DOMAIN = "https://www.deltapremium.site"
 
 SITE_DOMAIN = _env("SITE_DOMAIN", DEFAULT_SITE_DOMAIN).rstrip("/")
 IS_VERCEL = bool(os.getenv("VERCEL"))
-SITE_HOST = urlparse(SITE_DOMAIN).netloc or "luaumor.vercel.app"
+SITE_HOST = urlparse(SITE_DOMAIN).netloc or "www.deltapremium.site"
 SERVER_HOST = _env("SERVER_HOST", "194.164.194.118").strip()
 APP_HOST = _env("APP_HOST", "0.0.0.0")
 APP_PORT = _env_int("PORT", _env_int("APP_PORT", 9745))
@@ -130,7 +130,6 @@ _used_download_jtis: set[str] = set()
 ALLOWED_ORIGINS = [
     SITE_DOMAIN,
     f"https://www.{SITE_HOST.replace('www.', '')}",
-    "https://deltapremium.site",
     "https://www.deltapremium.site",
     f"http://{SERVER_HOST}:{APP_PORT}",
     f"https://{SERVER_HOST}",
@@ -188,6 +187,14 @@ app.add_middleware(TrustedHostMiddleware, allowed_hosts=ALLOWED_HOSTS)
 
 @app.middleware("http")
 async def add_security_headers(request: Request, call_next):
+    # Enforce canonical domain for public traffic.
+    host = request.headers.get("host", "").split(":")[0].lower()
+    if host == "deltapremium.site":
+        target = f"https://www.deltapremium.site{request.url.path}"
+        if request.url.query:
+            target = f"{target}?{request.url.query}"
+        return RedirectResponse(url=target, status_code=308)
+
     response = await call_next(request)
     response.headers["X-Content-Type-Options"] = "nosniff"
     response.headers["X-Frame-Options"] = "DENY"
