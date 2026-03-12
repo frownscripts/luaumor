@@ -103,6 +103,7 @@ ENABLE_EMBEDDED_DISCORD_BOT = _env_bool("ENABLE_EMBEDDED_DISCORD_BOT", False)
 ENABLE_STARTUP_ROLE_SYNC = _env_bool("ENABLE_STARTUP_ROLE_SYNC", False)
 ENABLE_PERIODIC_ROLE_SYNC = _env_bool("ENABLE_PERIODIC_ROLE_SYNC", False)
 RUN_BACKGROUND_WORKERS = _env_bool("RUN_BACKGROUND_WORKERS", not IS_VERCEL)
+REQUIRE_PERSISTED_SESSIONS = _env_bool("REQUIRE_PERSISTED_SESSIONS", not IS_VERCEL)
 ROLE_SYNC_INTERVAL_SECONDS = max(_env_int("ROLE_SYNC_INTERVAL_SECONDS", 1800), 300)
 SESSION_CLEANUP_INTERVAL_SECONDS = max(_env_int("SESSION_CLEANUP_INTERVAL_SECONDS", 21600), 300)
 
@@ -231,15 +232,17 @@ def create_jwt(user_id: int, role: str) -> str:
         "exp": exp,
         "iat": now,
     }
-    store_session(user_id, jti, exp.isoformat())
+    if REQUIRE_PERSISTED_SESSIONS:
+        store_session(user_id, jti, exp.isoformat())
     return jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGO)
 
 
 def decode_jwt(token: str) -> dict:
     payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGO])
-    jti = payload.get("jti")
-    if not jti or not is_session_valid(jti):
-        raise HTTPException(status_code=401, detail="Session expired")
+    if REQUIRE_PERSISTED_SESSIONS:
+        jti = payload.get("jti")
+        if not jti or not is_session_valid(jti):
+            raise HTTPException(status_code=401, detail="Session expired")
     return payload
 
 
@@ -729,6 +732,7 @@ async def _app_lifespan(app: FastAPI):
     print("[Delta Premium] Database initialized")
     print(f"[Delta Premium] Site domain: {SITE_DOMAIN}")
     print(f"[Delta Premium] Discord redirect: {DISCORD_REDIRECT_URI}")
+    print(f"[Delta Premium] Persisted sessions required: {REQUIRE_PERSISTED_SESSIONS}")
 
     stop_event = asyncio.Event()
     app.state.stop_event = stop_event
